@@ -8,6 +8,9 @@ dependencies:
   cinnabun:
     specifier: ^0.1.65
     version: 0.1.65
+  cinnabun-transitions:
+    specifier: ^1.0.6
+    version: 1.0.6
 
 devDependencies:
   typescript:
@@ -216,6 +219,12 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /cinnabun-transitions@1.0.6:
+    resolution: {integrity: sha512-yG2TNPb4++QfPfSfOb1wirQQSyJYe61YzoxqHZZM+zA1vvMKULl4m55HoZyRtletG6VuG0uw/Nf06jPFl4cRRw==}
+    dependencies:
+      cinnabun: 0.1.65
+    dev: false
 
   /cinnabun@0.1.65:
     resolution: {integrity: sha512-64mANstI1fWNw1f92Rn1SdOzPAXi2fX4CEKMvCp2dS8CQXz3atgb0u8Ip2rskrdZjcd8clDIieIXoFdE9IF35g==}

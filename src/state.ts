@@ -3,7 +3,8 @@ import { loadLists, saveState } from "./list"
 import { ListItem } from "./types"
 
 export const lists = createSignal(loadLists())
-export const selectedListItem = createSignal<ListItem | null>(null)
+export const selectedListItem = createSignal<(ListItem & { listId: string }) | null>(null)
+export const showSelectedListItem = createSignal(false)
 
 export const activeLists = useComputed(() => lists.value.filter((list) => !list.archived), [lists])
 export const archivedLists = useComputed(() => lists.value.filter((list) => list.archived), [lists])
@@ -55,12 +56,24 @@ export const removeListItem = (listId: string, itemId: string) => {
   }
 }
 
+export const archiveListItem = (listId: string, itemId: string) => {
+  const list = lists.value.find((list) => list.id === listId)
+  if (list) {
+    const item = list.items.find((item) => item.id === itemId)
+    if (item) {
+      item.archived = true
+      lists.notify()
+    }
+  }
+}
+
 export const selectListItem = (listId: string, itemId: string) => {
   const list = lists.value.find((list) => list.id === listId)
   if (list) {
     const item = list.items.find((item) => item.id === itemId)
     if (item) {
-      selectedListItem.value = item
+      selectedListItem.value = { ...item, listId }
     }
+    showSelectedListItem.value = true
   }
 }

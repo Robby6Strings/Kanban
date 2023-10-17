@@ -49,7 +49,7 @@ export const List = ({ list }: { list: ListData }) => {
       </div>
       <div className="list-items">
         <div className="list-items-inner">
-          <For each={list.items} template={(item) => <ListItem item={item} />} />
+          <For each={list.items} template={(item) => <ListItem item={item} listId={list.id} />} />
           <div
             watch={lists}
             className="list-item default"
