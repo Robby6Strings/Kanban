@@ -3,7 +3,7 @@ import type { List as ListData } from "../types"
 import { ListItem } from "./ListItem"
 import { For, createSignal } from "cinnabun"
 import { ClickOutsideListener } from "cinnabun/listeners"
-import { archiveList, lists, removeList } from "../state"
+import { addListItem, archiveList, lists, removeList } from "../state"
 import { MoreIcon } from "./icons/MoreIcon"
 
 export const List = ({ list }: { list: ListData }) => {
@@ -57,7 +57,7 @@ export const List = ({ list }: { list: ListData }) => {
           >
             <i>No items yet</i>
           </div>
-          <button type="button" className="add-list-item">
+          <button type="button" className="add-list-item" onclick={() => addListItem(list.id)}>
             + Add another card
           </button>
         </div>
