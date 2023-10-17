@@ -3,8 +3,9 @@ import type { List as ListData } from "../types"
 import { ListItem } from "./ListItem"
 import { For, createSignal } from "cinnabun"
 import { ClickOutsideListener } from "cinnabun/listeners"
-import { addListItem, archiveList, lists, removeList } from "../state"
 import { MoreIcon } from "./icons/MoreIcon"
+import { removeList, archiveList, addListItem } from "../list"
+import { lists } from "../state"
 
 export const List = ({ list }: { list: ListData }) => {
   const actionsOpen = createSignal(false)
