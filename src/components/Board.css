@@ -1,0 +1,7 @@
+#board {
+  flex-grow: 1;
+  min-width: 100%;
+  min-height: 100%;
+  display: flex;
+  padding: 0.5rem;
+}
