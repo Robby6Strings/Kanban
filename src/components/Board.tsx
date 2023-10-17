@@ -1,6 +1,7 @@
 import "./Board.css"
-import { addList, activeLists, draggingBoard, drag } from "../state"
+import { activeLists, draggingBoard, drag } from "../state"
 import { List } from "./List"
+import { addList } from "../list"
 
 export const Board = () => {
   const handleMouseDown = () => {

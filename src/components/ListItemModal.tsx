@@ -1,14 +1,9 @@
 import { createSignal } from "cinnabun"
 import { ClickOutsideListener } from "cinnabun/listeners"
-import {
-  archiveListItem,
-  lists,
-  removeListItem,
-  selectedListItem,
-  showSelectedListItem,
-} from "../state"
+import { lists, selectedListItem, showSelectedListItem } from "../state"
 import { MoreIcon } from "./icons/MoreIcon"
 import { Modal, ModalHeader } from "./modal/Modal"
+import { removeListItem, archiveListItem } from "../list"
 
 export const ListItemModal = () => {
   const actionsOpen = createSignal(false)
