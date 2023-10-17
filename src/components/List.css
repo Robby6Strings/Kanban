@@ -21,6 +21,8 @@
   border-radius: var(--radius);
   overflow: hidden;
   height: fit-content;
+  cursor: initial;
+  user-select: none;
 }
 
 .list-header {
@@ -86,7 +88,9 @@
   display: flex;
   align-items: center;
   gap: .5rem;
+  
 }
+
 
 .list-item.default {
   background-color: transparent;

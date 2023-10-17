@@ -1,6 +1,19 @@
 #board {
   flex-grow: 1;
   min-width: 100%;
+  min-height: 100%;
+  display: flex;
+  width: fit-content;
+}
+
+#board .inner {
+  min-width: 100%;
   display: flex;
   padding: 0.5rem;
+  cursor: grab;
+  min-height: 100%;
+}
+
+#board .inner.dragging {
+  cursor: grabbing;
 }

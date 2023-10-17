@@ -1,6 +1,6 @@
 import "./style.css"
 import { Cinnabun } from "cinnabun"
 import { App } from "./App"
+import { rootElement } from "./state"
 
-const root = document.getElementById("app")!
-Cinnabun.bake(App(), root)
+Cinnabun.bake(App(), rootElement)
