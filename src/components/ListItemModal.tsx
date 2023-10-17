@@ -11,8 +11,8 @@ export const ListItemModal = () => {
     if (!selectedListItem.value) return
 
     const listItem = lists.value
-      .find((list) => list.id === selectedListItem.value!.listId)
-      ?.items.find((item) => item.id === selectedListItem.value!.id)
+      .find((list) => list.value.id === selectedListItem.value!.listId)
+      ?.value.items.find((item) => item.id === selectedListItem.value!.id)
     if (!listItem) return
 
     listItem.title = (e.target as HTMLInputElement).value

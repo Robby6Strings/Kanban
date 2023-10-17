@@ -25,6 +25,13 @@
   user-select: none;
 }
 
+.list-footer {
+  padding: .5rem;
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+
 .list-header {
   display:flex;
   padding: .5rem;
@@ -113,4 +120,5 @@
   gap: .5rem;
   cursor: pointer;
   text-align: center;
+  width: 100%;
 }
