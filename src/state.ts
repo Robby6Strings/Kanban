@@ -53,6 +53,8 @@ export const removeListItem = (listId: string, itemId: string) => {
   if (list) {
     list.items = list.items.filter((item) => item.id !== itemId)
     lists.notify()
+    selectedListItem.value = null
+    showSelectedListItem.value = false
   }
 }
 
@@ -63,6 +65,8 @@ export const archiveListItem = (listId: string, itemId: string) => {
     if (item) {
       item.archived = true
       lists.notify()
+      selectedListItem.value = null
+      showSelectedListItem.value = false
     }
   }
 }

@@ -5,8 +5,8 @@ import { For } from "cinnabun"
 
 export const Board = () => {
   return (
-    <div id="board">
-      <For each={activeLists} template={(list) => <List list={list} />} />
+    <div id="board" watch={activeLists} bind:children>
+      {() => activeLists.value.map((list) => <List list={list} />)}
       <div className="add-list">
         <button type="button" onclick={addList}>
           Add a list...
