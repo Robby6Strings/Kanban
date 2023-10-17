@@ -1,7 +1,6 @@
 import "./Board.css"
 import { addList, activeLists } from "../state"
 import { List } from "./List"
-import { For } from "cinnabun"
 
 export const Board = () => {
   return (

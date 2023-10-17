@@ -29,6 +29,7 @@ export const ListItemModal = () => {
       visible={() => showSelectedListItem.value}
       watch={showSelectedListItem}
       onUnmount={() => (selectedListItem.value = null)}
+      onclose={() => (actionsOpen.value = false)}
     >
       <ModalHeader>
         <input
@@ -36,7 +37,7 @@ export const ListItemModal = () => {
           className="list-title"
           onchange={changeTitle}
           watch={selectedListItem}
-          bind:value={() => selectedListItem.value?.title}
+          bind:value={() => selectedListItem.value?.title || ""}
         />
 
         <div className="list-actions">
