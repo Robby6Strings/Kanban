@@ -19,6 +19,7 @@
   background-color: var(--list-bg-color);
   margin: 0 .5rem;
   border-radius: var(--radius);
+  overflow: hidden;
 }
 
 .list-header {
