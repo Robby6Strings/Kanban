@@ -1,12 +1,19 @@
 import "./ItemList.css"
 import type { ReactiveList } from "../types"
-import { Item } from "./Item"
-import { Signal, createSignal } from "cinnabun"
+import { Signal, createSignal, useRef } from "cinnabun"
 import { ClickOutsideListener } from "cinnabun/listeners"
 import { MoreIcon } from "./icons/MoreIcon"
-import { addListItem, archiveList, deleteList, updateList } from "../state"
+import {
+  addListItem,
+  archiveList,
+  deleteList,
+  selectListItem,
+  updateList,
+} from "../state"
 
 export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
+  const dropAreaRef = useRef()
+
   const actionsOpen = createSignal(false)
   const changeTitle = (e: Event) => {
     if (!list.value) return
@@ -54,11 +61,22 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
       </div>
       <div className="list-items">
         <div
+          ref={dropAreaRef}
           className="list-items-inner"
           watch={list.value.items}
           bind:children
         >
-          {() => list.value.items.value?.map((item) => <Item item={item} />)}
+          {() =>
+            list.value.items.value?.map((item) => (
+              <button
+                key={item.id}
+                className="list-item"
+                onclick={() => selectListItem(item)}
+              >
+                {item.title || "New Item"}
+              </button>
+            ))
+          }
           {() =>
             !list.value.items.value || list.value.items.value.length === 0 ? (
               <div className="list-item default">
