@@ -100,7 +100,15 @@
   display: flex;
   align-items: center;
   gap: .5rem;
-  
+}
+
+
+
+.list-item.drop-target.top {
+  margin-top: 3rem;
+}
+.list-item.drop-target.bottom {
+  margin-bottom: 3rem;
 }
 
 

@@ -1,6 +1,6 @@
 import "./ItemList.css"
 import type { ListItem, ReactiveList } from "../types"
-import { For, Signal, createSignal, useRef } from "cinnabun"
+import { Component, For, Signal, createSignal, useRef } from "cinnabun"
 import { ClickOutsideListener } from "cinnabun/listeners"
 import { MoreIcon } from "./icons/MoreIcon"
 import {
@@ -14,10 +14,10 @@ import {
 } from "../state"
 
 export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
-  const dropAreaRef = useRef()
+  const dropAreaComponentRef = createSignal<Component | null>(null)
 
-  const handleListMouseOver = (e: MouseEvent) => {
-    if (!dropAreaRef.value) return
+  const handleListMouseMove = (e: MouseEvent) => {
+    if (!dropAreaComponentRef.value) return
     if (!clickedItem.value || !clickedItem.value.dragging) {
       listItemDragTarget.value = null
       return
@@ -26,13 +26,20 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
 
     const evt = e as MouseEvent
     // find the closest item to the mouse
-    const elements = Array.from(dropAreaRef.value.children) || []
+    const el = dropAreaComponentRef.value.element as HTMLElement
+    const elements = Array.from(el.children) || []
+    //console.log(elements)
     let closestDistance = Infinity
     let index: number | null = null
     let side: "top" | "bottom" = "bottom"
 
     for (let i = 0; i < elements.length; i++) {
       const element = elements[i]
+      if (element.classList.contains("default")) {
+        index = 0
+        side = "top"
+        break
+      }
       const itemRect = element.getBoundingClientRect()
       const distance = Math.sqrt(
         Math.pow(itemRect.x - evt.clientX, 2) +
@@ -56,13 +63,21 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
     )
       return
 
-    listItemDragTarget.value = { index, side }
-  }
+    if (clickedItem.value.listId === list.value.id) {
+      if (clickedItem.value.index !== list.value.items.value.length - 1) {
+        if (index >= clickedItem.value.index) {
+          console.log("plus")
+          index++
+        } else {
+          console.log("minus")
+          index--
+          if (index < 0) index = 0
+        }
+      }
+    }
 
-  dropAreaRef.subscribe((el) => {
-    if (!el) return
-    ;(el as HTMLElement).addEventListener("mousemove", handleListMouseOver)
-  })
+    listItemDragTarget.value = { index, side, listId: list.value.id }
+  }
 
   const actionsOpen = createSignal(false)
   const changeTitle = (e: Event) => {
@@ -111,7 +126,17 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
       </div>
       <div className="list-items">
         <div
-          ref={dropAreaRef}
+          onMounted={(self) => {
+            dropAreaComponentRef.value = self
+            ;(self.element! as HTMLElement).addEventListener(
+              "mousemove",
+              handleListMouseMove
+            )
+            ;(self.element! as HTMLElement).addEventListener(
+              "mouseleave",
+              () => (listItemDragTarget.value = null)
+            )
+          }}
           className="list-items-inner"
           watch={list}
           bind:children
@@ -123,7 +148,17 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
 
           {() =>
             !list.value.items.value || list.value.items.value.length === 0 ? (
-              <div className="list-item default">
+              <div
+                watch={listItemDragTarget}
+                bind:className={() =>
+                  `list-item default ${
+                    listItemDragTarget.value?.index === 0 &&
+                    list.value?.id === listItemDragTarget.value?.listId
+                      ? `drop-target ${listItemDragTarget.value?.side}`
+                      : ""
+                  }`
+                }
+              >
                 <i>No items yet</i>
               </div>
             ) : (
@@ -149,19 +184,28 @@ const ListItemButton = ({ item, idx }: { item: ListItem; idx: number }) => {
   const btnRef = useRef()
   return (
     <button
+      onclick={() => selectListItem(item)}
       ref={btnRef}
       key={item.id}
+      watch={[clickedItem, listItemDragTarget]}
+      bind:visible={() =>
+        !clickedItem.value ||
+        !clickedItem.value.dragging ||
+        clickedItem.value.id !== item.id
+      }
       bind:className={() =>
         `list-item ${
-          listItemDragTarget.value?.index === idx
+          listItemDragTarget.value?.index === idx &&
+          item.listId === listItemDragTarget.value?.listId
             ? `drop-target ${listItemDragTarget.value?.side}`
             : ""
         }`
       }
-      onclick={() => selectListItem(item)}
       onmousedown={(e: MouseEvent) =>
         (clickedItem.value = {
           id: item.id,
+          listId: item.listId,
+          index: idx,
           dragging: false,
           element: btnRef.value!.cloneNode(true) as HTMLButtonElement,
           mouseOffset: {
@@ -169,13 +213,6 @@ const ListItemButton = ({ item, idx }: { item: ListItem; idx: number }) => {
             y: e.offsetY,
           },
         })
-      }
-      //onmouseup={() => (clickedItem.value = null)}
-      watch={[clickedItem, listItemDragTarget]}
-      bind:visible={() =>
-        !clickedItem.value ||
-        !clickedItem.value.dragging ||
-        clickedItem.value.id !== item.id
       }
     >
       {() => item.title || "New Item"}

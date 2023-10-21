@@ -40,6 +40,7 @@ export const mousePos = createSignal({ x: 0, y: 0 })
 export const draggingBoard = createSignal(false)
 export const listItemDragTarget = createSignal<null | {
   index: number
+  listId: number
   side: "top" | "bottom"
 }>(null)
 export const boards = asyncSignal(load())
@@ -49,6 +50,8 @@ export const showSelectedListItem = createSignal(false)
 
 export const clickedItem = createSignal<{
   id: number
+  index: number
+  listId: number
   dragging: boolean
   element: HTMLElement
   mouseOffset: { x: number; y: number }
