@@ -1,11 +1,5 @@
 import { Signal, createSignal, useComputed } from "cinnabun"
-import {
-  List,
-  ListBoard,
-  ListItem,
-  ReactiveList,
-  ReactiveListboard,
-} from "./types"
+import { ListBoard, ListItem, ReactiveListboard } from "./types"
 import {
   addItem,
   addList,
@@ -54,6 +48,8 @@ export async function selectBoard(board: ListBoard) {
       items: asyncSignal(loadItems(list.id)),
     })
   )
+
+  console.log(lists)
 
   selectedBoard.value = {
     ...board,
