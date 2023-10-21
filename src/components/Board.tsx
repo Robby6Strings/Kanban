@@ -1,4 +1,4 @@
-import "./ListBoard.css"
+import "./Board.css"
 import {
   activeLists,
   draggingBoard,
@@ -6,9 +6,9 @@ import {
   selectedBoard,
   addBoardList,
 } from "../state"
-import { List } from "./List"
+import { ItemList } from "./ItemList"
 
-export const ListBoard = () => {
+export const Board = () => {
   const handleMouseDown = () => {
     draggingBoard.value = true
   }
@@ -41,7 +41,7 @@ export const ListBoard = () => {
           "inner " + (draggingBoard.value ? "dragging" : "")
         }
       >
-        {() => activeLists.value.map((list) => <List list={list} />)}
+        {() => activeLists.value.map((list) => <ItemList list={list} />)}
         <div className="add-list">
           <button
             type="button"

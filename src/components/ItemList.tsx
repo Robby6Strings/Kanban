@@ -1,12 +1,12 @@
-import "./List.css"
+import "./ItemList.css"
 import type { ReactiveList } from "../types"
-import { ListItem } from "./ListItem"
+import { Item } from "./Item"
 import { Signal, createSignal } from "cinnabun"
 import { ClickOutsideListener } from "cinnabun/listeners"
 import { MoreIcon } from "./icons/MoreIcon"
 import { addListItem, archiveList, deleteList } from "../state"
 
-export const List = ({ list }: { list: Signal<ReactiveList> }) => {
+export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
   const actionsOpen = createSignal(false)
   const changeTitle = (e: Event) => {
     if (!list.value) return
@@ -58,9 +58,7 @@ export const List = ({ list }: { list: Signal<ReactiveList> }) => {
           watch={list.value.items}
           bind:children
         >
-          {() =>
-            list.value.items.value?.map((item) => <ListItem item={item} />)
-          }
+          {() => list.value.items.value?.map((item) => <Item item={item} />)}
           {() =>
             !list.value.items.value || list.value.items.value.length === 0 ? (
               <div className="list-item default">

@@ -1,5 +1,4 @@
-import { ListBoard } from "./components/ListBoard"
-import { Header } from "./components/Header"
+import { Board } from "./components/Board"
 import { ListItemModal } from "./components/ListItemModal"
 import { BoardList } from "./components/BoardList"
 
@@ -10,7 +9,7 @@ export const App = () => {
         <nav className="nav">
           <BoardList />
         </nav>
-        <ListBoard />
+        <Board />
         <ListItemModal />
       </main>
     </>
