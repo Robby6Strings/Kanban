@@ -63,15 +63,18 @@ h1 {
 main {
   flex-grow: 1;
   display: flex;
-  width: 100vw;
-  overflow: auto;
+
 }
 
 nav {
   background-color: var(--nav-bg-color);
   max-height: 100vh;
   overflow-y: auto;
-  
+  min-width: 180px;
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 1;
 }
 
 header {
@@ -179,5 +182,9 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+  input, textarea {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #000000;
   }
 }

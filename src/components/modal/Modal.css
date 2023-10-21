@@ -21,7 +21,6 @@
 }
 
 .modal {
-  background-color: var(--dark);
   margin: auto;
   flex-basis: 350px;
   --padding: 1rem 1.5rem;
@@ -34,11 +33,7 @@
   max-width: calc(100vw - 1rem);
 }
 
-@media (prefers-color-scheme: light) {
-  .modal {
-    background-color: #fafafa;
-  }
-}
+
 .modal.lg {
   width: 720px;
   flex-basis: 100%;
@@ -76,11 +71,11 @@
 
 .modal-body {
   padding: var(--padding);
-  background-color: rgba(255,255,255, .05);
+  background-color: #1e1e1e;
 }
 @media (prefers-color-scheme: light) {
   .modal-body {
-    background-color: rgba(0, 0, 0, .015);
+    background-color: #eee;
   }
 }
 
