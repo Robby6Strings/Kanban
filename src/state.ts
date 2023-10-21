@@ -150,8 +150,11 @@ export async function updateListItem(item: ListItem) {
 
   const res = await updateItem(item)
 
+  console.log(res, index, list.value.items.value)
+
   list.value.items.value![index] = res
-  list.value.items.notify()
+  //list.value.items.notify()
+  list.notify()
 }
 
 export async function deleteListItem(item: ListItem) {

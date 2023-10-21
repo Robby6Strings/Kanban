@@ -64,7 +64,7 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
         <div
           ref={dropAreaRef}
           className="list-items-inner"
-          watch={list.value.items}
+          watch={list}
           bind:children
         >
           <For
