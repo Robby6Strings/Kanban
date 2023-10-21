@@ -1,5 +1,5 @@
 import { Board } from "./components/Board"
-import { ListItemModal } from "./components/ListItemModal"
+import { ItemModal } from "./components/ItemModal"
 import { BoardList } from "./components/BoardList"
 
 export const App = () => {
@@ -10,7 +10,7 @@ export const App = () => {
           <BoardList />
         </nav>
         <Board />
-        <ListItemModal />
+        <ItemModal />
       </main>
     </>
   )

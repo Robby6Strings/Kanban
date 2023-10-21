@@ -10,7 +10,7 @@ import {
 import { MoreIcon } from "./icons/MoreIcon"
 import { Modal, ModalBody, ModalHeader } from "./modal/Modal"
 
-export const ListItemModal = () => {
+export const ItemModal = () => {
   const actionsOpen = createSignal(false)
   const changeTitle = (e: Event) => {
     if (!selectedListItem.value) return

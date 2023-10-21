@@ -4,14 +4,14 @@ import { Item } from "./Item"
 import { Signal, createSignal } from "cinnabun"
 import { ClickOutsideListener } from "cinnabun/listeners"
 import { MoreIcon } from "./icons/MoreIcon"
-import { addListItem, archiveList, deleteList } from "../state"
+import { addListItem, archiveList, deleteList, updateList } from "../state"
 
 export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
   const actionsOpen = createSignal(false)
   const changeTitle = (e: Event) => {
     if (!list.value) return
     list.value.title = (e.target as HTMLInputElement).value
-    list.notify()
+    return updateList(list.value)
   }
 
   return (

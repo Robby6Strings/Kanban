@@ -73,6 +73,9 @@
   display: block;
   width: 100%;
   text-align: right;
+  font-weight: 400;
+  opacity: .75;
+  font-size: .85rem;
 }
 
 .list-items {

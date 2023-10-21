@@ -15,12 +15,12 @@
   -webkit-text-size-adjust: 100%;
 
   --primary-color: #646cff;
-  --primary-color-dark: #444787
+  --primary-color-dark: #444787;
 
   --header-bg-color: #1a1a1a;
   --nav-bg-color: #1a1a1a;
   --list-bg-color: #2c2c2c;
-  --list-actions-menu-bg-color: #4a4a4a;
+  --list-actions-menu-bg-color: #464646;
   --list-item-bg-color: #3a3a3a;
   --radius: 8px;
   --color: #e6e6e6;

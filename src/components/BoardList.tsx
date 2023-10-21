@@ -9,7 +9,6 @@ export const BoardList = () => {
     boards.value?.splice(0, 0, newBoard)
     boards.notify()
     selectBoard(newBoard)
-    console.log(boards.value)
   }
   return (
     <div id="board-list">

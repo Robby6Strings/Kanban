@@ -14,6 +14,7 @@ import {
   loadLists,
   deleteList as db_deleteList,
   archiveList as db_archiveList,
+  updateList as db_updateList,
   updateItem,
   deleteItem,
 } from "./db"
@@ -60,13 +61,12 @@ export async function selectBoard(board: ListBoard) {
       })
     })
   )
-  console.log(lists)
-
   selectedBoard.value = {
     ...board,
     lists: asSignals,
   }
 }
+
 export async function addBoardList(boardId: number) {
   const lst = await addList(boardId)
   selectedBoard.value?.lists.push(
@@ -87,6 +87,11 @@ export async function addListItem(listId: number) {
 
   list.value?.items.value?.push(item)
   list.value.items.notify()
+}
+
+export async function updateList(list: ReactiveList) {
+  const { items, ...rest } = list
+  return db_updateList(rest)
 }
 
 export async function deleteList(listId: number) {
@@ -165,12 +170,6 @@ export async function archiveListItem(item: ListItem) {
 export function selectListItem(item: ListItem) {
   selectedListItem.value = item
   showSelectedListItem.value = true
-}
-export function deselectBoard() {
-  selectedBoard.value = null
-}
-export function deselectListItem() {
-  showSelectedListItem.value = false
 }
 
 export const activeLists = useComputed(
