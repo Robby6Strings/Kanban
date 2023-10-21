@@ -63,17 +63,9 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
     )
       return
 
-    if (clickedItem.value.listId === list.value.id) {
-      if (clickedItem.value.index !== list.value.items.value.length - 1) {
-        if (index >= clickedItem.value.index) {
-          console.log("plus")
-          index++
-        } else {
-          console.log("minus")
-          index--
-          if (index < 0) index = 0
-        }
-      }
+    const isOriginList = clickedItem.value.listId === list.value.id
+    if (isOriginList && index >= clickedItem.value.index) {
+      index++
     }
 
     listItemDragTarget.value = { index, side, listId: list.value.id }
