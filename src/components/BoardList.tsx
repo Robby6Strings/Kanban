@@ -1,7 +1,7 @@
 import "./BoardList.css"
 import { addBoard } from "../db"
 import { boards, selectBoard, selectedBoard } from "../state"
-import { ReactiveListboard } from "../types"
+import { ListBoard } from "../types"
 
 export const BoardList = () => {
   const createBoard = async () => {
@@ -31,16 +31,24 @@ export const BoardList = () => {
   )
 }
 
-const BoardListItem = ({ board }: { board: ReactiveListboard }) => {
+const BoardListItem = ({ board }: { board: ListBoard }) => {
   return (
     <div
       watch={selectedBoard}
       bind:className={() =>
-        selectedBoard.value?.id === board.id ? "board-list-item selected" : "board-list-item"
+        selectedBoard.value?.id === board.id
+          ? "board-list-item selected"
+          : "board-list-item"
       }
     >
-      <button onclick={() => selectBoard(board)} type="button" className="board-list-item-button">
-        <div className="board-list-item-title">{board.title || "New board"}</div>
+      <button
+        onclick={() => selectBoard(board)}
+        type="button"
+        className="board-list-item-button"
+      >
+        <div className="board-list-item-title">
+          {board.title || "New board"}
+        </div>
       </button>
     </div>
   )

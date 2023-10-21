@@ -1,7 +1,12 @@
 import "./ListBoard.css"
-import { activeLists, draggingBoard, drag, selectedBoard } from "../state"
+import {
+  activeLists,
+  draggingBoard,
+  drag,
+  selectedBoard,
+  addBoardList,
+} from "../state"
 import { List } from "./List"
-import { addList } from "../db"
 
 export const ListBoard = () => {
   const handleMouseDown = () => {
@@ -32,11 +37,16 @@ export const ListBoard = () => {
     >
       <div
         watch={draggingBoard}
-        bind:className={() => "inner " + (draggingBoard.value ? "dragging" : "")}
+        bind:className={() =>
+          "inner " + (draggingBoard.value ? "dragging" : "")
+        }
       >
         {() => activeLists.value.map((list) => <List list={list} />)}
         <div className="add-list">
-          <button type="button" onclick={addList}>
+          <button
+            type="button"
+            onclick={() => addBoardList(selectedBoard.value!.id)}
+          >
             Add a list...
           </button>
         </div>

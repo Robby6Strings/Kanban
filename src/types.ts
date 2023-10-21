@@ -1,31 +1,31 @@
 import { type Signal } from "cinnabun"
 
-export type ReactiveListboard = {
-  id: number
-  title: string
-  lists: Signal<List | null>[]
-  archived: boolean
-  created: Date
+export type ReactiveListboard = ListBoard & {
+  lists: Signal<ReactiveList>[]
+}
+
+export type ReactiveList = List & {
+  items: Signal<ListItem[] | null>
 }
 
 export type ListBoard = {
   id: number
   title: string
-  lists: List[]
   archived: boolean
   created: Date
 }
 
 export type List = {
   id: number
+  boardId: number
   title: string
-  items: ListItem[]
   archived: boolean
   created: Date
 }
 
 export type ListItem = {
   id: number
+  listId: number
   title: string
   description: string
   refereceItems: number[]

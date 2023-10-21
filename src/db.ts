@@ -1,11 +1,31 @@
 import { idb, model, Field } from "async-idb-orm"
-import { List, ListItem, ReactiveListboard } from "./types"
-import { Signal } from "cinnabun"
-import { asyncSignal, selectBoard, selectedBoard } from "./state"
+import { List, ListItem, ListBoard } from "./types"
+
+export {
+  // boards
+  loadBoards,
+  updateBoard,
+  addBoard,
+  deleteBoard,
+  archiveBoard,
+  // lists
+  loadLists,
+  updateList,
+  addList,
+  deleteList,
+  archiveList,
+  // items
+  loadItems,
+  updateItem,
+  addItem,
+  deleteItem,
+  archiveItem,
+}
 
 const items = model({
   id: Field.number({ primaryKey: true }),
-  title: Field.string(),
+  listId: Field.number(),
+  title: Field.string({ default: () => "" }),
   created: Field.date({ default: () => new Date() }),
   archived: Field.boolean({ default: () => false }),
   refereceItems: Field.array(Field.number()),
@@ -13,129 +33,67 @@ const items = model({
 
 const lists = model({
   id: Field.number({ primaryKey: true }),
-  title: Field.string(),
+  boardId: Field.number(),
+  title: Field.string({ default: () => "" }),
   created: Field.date({ default: () => new Date() }),
   archived: Field.boolean({ default: () => false }),
-  items: Field.array(Field.number()),
 })
 
 const boards = model({
   id: Field.number({ primaryKey: true }),
-  title: Field.string(),
+  title: Field.string({ default: () => "" }),
   created: Field.date({ default: () => new Date() }),
   archived: Field.boolean({ default: () => false }),
-  lists: Field.array(Field.number()),
 })
 
 const db = idb("kanban", { boards, lists, items })
 
-export const loadBoards = async (): Promise<ReactiveListboard[]> => {
-  const boards = await db.boards.all()
-  const res = boards
-    .map((board) => ({
-      id: board.id,
-      title: board.title,
-      created: board.created,
-      archived: board.archived,
-      lists: board.lists.map((list) => asyncSignal(db.lists.read(list)) as Signal<List | null>),
-    }))
-    .reverse()
-  if (res.length > 0) selectBoard(res[0])
-  return res
-}
+// Boards
 
-export const updateBoard = async (board: ReactiveListboard) => {
-  return await db.boards.update({
-    id: board.id,
-    title: board.title,
-    created: board.created,
-    archived: board.archived,
-    lists: board.lists.map((list) => list.value?.id ?? 0),
-  })
-}
+const loadBoards = () => db.boards.all() as Promise<ListBoard[]>
 
-export const addBoard = async () => {
-  const board = await db.boards.create({
-    title: "",
-    created: new Date(),
-    archived: false,
-    lists: [],
-  })
-  if (!board) throw new Error("Board not created")
-  return {
-    ...board,
-    lists: board.lists.map((list) => asyncSignal(db.lists.read(list)) as Signal<List | null>),
-  } as ReactiveListboard
-}
+const updateBoard = (board: ListBoard) =>
+  db.boards.update(board) as Promise<ListBoard>
 
-export const updateList = async (list: List) => {
-  return await db.lists.update({
-    id: list.id,
-    title: list.title,
-    created: list.created,
-    archived: list.archived,
-    items: list.items.map((item) => item.id),
-  })
-}
+const addBoard = () => db.boards.create({}) as Promise<ListBoard>
 
-export const addList = async () => {
-  const list = await db.lists.create({
-    title: "",
-    created: new Date(),
-    archived: false,
-    items: [],
-  })
-  if (!list) throw new Error("List not created")
-  const board = await db.boards.read(selectedBoard.value!.id)
-  if (!board) throw new Error("Board not found")
-  await db.boards.update({ ...board, lists: [...board.lists, list.id] })
-}
+const deleteBoard = (board: ListBoard) =>
+  db.boards.delete(board.id) as Promise<void>
 
-export const updateItem = async (item: ListItem) => {
-  return db.items.update(item)
-}
+const archiveBoard = (board: ListBoard) =>
+  db.boards.update({ ...board, archived: true }) as Promise<ListBoard>
 
-export const addItem = async (listId: number) => {
-  const item = await db.items.create({
-    title: "",
-    created: new Date(),
-    archived: false,
-    refereceItems: [],
-  })
-  if (!item) return
-  const list = await db.lists.read(listId)
-  if (!list) return
-  await db.lists.update({ ...list, items: [...list.items, item.id] })
-}
+// Lists
 
-export const deleteItem = async (item: ListItem) => {
-  return await db.items.delete(item.id)
-}
+const loadLists = (boardId: number) =>
+  db.lists.findMany((l) => {
+    return l.id === boardId
+  }) as Promise<List[]>
 
-export const deleteList = async (list: List) => {
-  return await db.lists.delete(list.id)
-}
+const updateList = (list: List) => db.lists.update(list) as Promise<List>
 
-export const deleteBoard = async (board: ReactiveListboard) => {
-  return await db.boards.delete(board.id)
-}
+const addList = (boardId: number) =>
+  db.lists.create({ boardId }) as Promise<List>
 
-export const archiveItem = async (item: ListItem) => {
-  return await db.items.update({ ...item, archived: true })
-}
+const deleteList = (list: List) => db.lists.delete(list.id) as Promise<void>
 
-export const archiveList = async (list: List) => {
-  return await db.lists.update({
-    ...list,
-    archived: true,
-    items: list.items.map((item) => item.id),
-  })
-}
+const archiveList = (list: List) =>
+  db.lists.update({ ...list, archived: true }) as Promise<List>
 
-export const archiveBoard = async (board: ReactiveListboard) => {
-  return await db.boards.update({
-    ...board,
-    archived: true,
-    lists: board.lists.map((list) => list.value?.id ?? 0),
-  })
-}
+// Items
+
+const loadItems = (listId: number) =>
+  db.items.findMany((i) => {
+    return i.listId === listId
+  }) as Promise<ListItem[]>
+
+const updateItem = (item: ListItem) =>
+  db.items.update(item) as Promise<ListItem>
+
+const addItem = (listId: number) =>
+  db.items.create({ listId, refereceItems: [] }) as Promise<ListItem>
+
+const deleteItem = (item: ListItem) => db.items.delete(item.id) as Promise<void>
+
+const archiveItem = (item: ListItem) =>
+  db.items.update({ ...item, archived: true }) as Promise<ListItem>
