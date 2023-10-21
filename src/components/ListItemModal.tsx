@@ -1,22 +1,17 @@
 import { createSignal } from "cinnabun"
 import { ClickOutsideListener } from "cinnabun/listeners"
-import { lists, selectedListItem, showSelectedListItem } from "../state"
+import { boards, selectedListItem, showSelectedListItem } from "../state"
 import { MoreIcon } from "./icons/MoreIcon"
 import { Modal, ModalHeader } from "./modal/Modal"
-import { removeListItem, archiveListItem } from "../list"
+import { archiveItem, deleteItem, updateItem } from "../db"
 
 export const ListItemModal = () => {
   const actionsOpen = createSignal(false)
   const changeTitle = (e: Event) => {
     if (!selectedListItem.value) return
 
-    const listItem = lists.value
-      .find((list) => list.value.id === selectedListItem.value!.listId)
-      ?.value.items.find((item) => item.id === selectedListItem.value!.id)
-    if (!listItem) return
-
-    listItem.title = (e.target as HTMLInputElement).value
-    lists.notify()
+    selectedListItem.value.title = (e.target as HTMLInputElement).value
+    updateItem(selectedListItem.value)
   }
   return (
     <Modal
@@ -49,20 +44,10 @@ export const ListItemModal = () => {
               watch={actionsOpen}
               bind:visible={() => actionsOpen.value}
             >
-              <button
-                type="button"
-                onclick={() =>
-                  removeListItem(selectedListItem.value!.listId, selectedListItem.value!.id)
-                }
-              >
+              <button type="button" onclick={() => deleteItem(selectedListItem.value!)}>
                 Delete item
               </button>
-              <button
-                type="button"
-                onclick={() =>
-                  archiveListItem(selectedListItem.value!.listId, selectedListItem.value!.id)
-                }
-              >
+              <button type="button" onclick={() => archiveItem(selectedListItem.value!)}>
                 Archive item
               </button>
             </div>

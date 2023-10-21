@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  async-idb-orm:
+    specifier: ^1.0.2
+    version: 1.0.2
   cinnabun:
     specifier: ^0.1.65
     version: 0.1.65
@@ -14,10 +17,10 @@ dependencies:
 
 devDependencies:
   typescript:
-    specifier: ^5.0.2
+    specifier: ^5.2.2
     version: 5.2.2
   vite:
-    specifier: ^4.4.5
+    specifier: ^4.4.11
     version: 4.4.11
 
 packages:
@@ -219,6 +222,10 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /async-idb-orm@1.0.2:
+    resolution: {integrity: sha512-NI8a46CVe2VgLGxtDe/mZxYznKdzZMKSgoPPo8oSx+VrX/s3wFRy5rd5JdREV5sSq7O3W3GRzXEDWk8TzObB9w==}
+    dev: false
 
   /cinnabun-transitions@1.0.6:
     resolution: {integrity: sha512-yG2TNPb4++QfPfSfOb1wirQQSyJYe61YzoxqHZZM+zA1vvMKULl4m55HoZyRtletG6VuG0uw/Nf06jPFl4cRRw==}

@@ -1,9 +1,9 @@
-import "./Board.css"
+import "./ListBoard.css"
 import { activeLists, draggingBoard, drag } from "../state"
 import { List } from "./List"
-import { addList } from "../list"
+import { addList } from "../db"
 
-export const Board = () => {
+export const ListBoard = () => {
   const handleMouseDown = () => {
     draggingBoard.value = true
   }
@@ -25,7 +25,7 @@ export const Board = () => {
       onmousedown={handleMouseDown}
       onmouseup={handleMouseUp}
       onmousemove={handleMouseMove}
-      id="board"
+      id="listboard"
       watch={[activeLists]}
       bind:children
     >

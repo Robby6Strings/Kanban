@@ -57,6 +57,15 @@ h1 {
   overflow: auto;
 }
 
+main {
+  flex-grow: 1;
+  display: flex;
+  padding: 1rem;
+  gap: 1rem;
+  width: 100vw;
+  overflow: auto;
+}
+
 header {
   display: flex;
   flex-direction: column;

@@ -1,9 +1,11 @@
 import { Signal, createSignal, useComputed } from "cinnabun"
-import { loadLists } from "./list"
-import { List, ListItem } from "./types"
+import { ListItem, ReactiveListboard } from "./types"
+import { loadBoards } from "./db"
 
-export const saveLists = (lists: Signal<List>[]) => {
-  localStorage.setItem("lists", JSON.stringify(lists.map((list) => list.value)))
+export function asyncSignal<T>(promise: Promise<T>): Signal<T | null> {
+  const signal = createSignal<T | null>(null)
+  promise.then((value) => (signal.value = value))
+  return signal
 }
 
 type DragState = {
@@ -17,26 +19,32 @@ export const drag = createSignal<DragState>({
 })
 
 export const rootElement = document.getElementById("app")!
-
 export const draggingBoard = createSignal(false)
-
-export const save = () => saveLists(lists.value)
-
-export const lists = createSignal(loadLists())
-lists.value.forEach((list) => list.subscribe(save))
-lists.subscribe(saveLists)
-console.log(lists.value)
-
-export const selectedListItem = createSignal<(ListItem & { listId: string }) | null>(null)
+export const boards = asyncSignal(loadBoards())
+export const selectedBoard = createSignal<ReactiveListboard | null>(null)
+export const selectedListItem = createSignal<(ListItem & { listId: number }) | null>(null)
 export const showSelectedListItem = createSignal(false)
 
+export function selectBoard(board: ReactiveListboard) {
+  selectedBoard.value = board
+}
+export function selectListItem(item: ListItem, listId: number) {
+  selectedListItem.value = { ...item, listId }
+}
+export function deselectBoard() {
+  selectedBoard.value = null
+}
+export function deselectListItem() {
+  selectedListItem.value = null
+}
+
 export const activeLists = useComputed(
-  () => lists.value.filter((list) => !list.value.archived),
-  [lists]
+  () => selectedBoard.value?.lists.filter((list) => !list.value?.archived) ?? [],
+  [selectedBoard]
 )
 export const archivedLists = useComputed(
-  () => lists.value.filter((list) => list.value.archived),
-  [lists]
+  () => selectedBoard.value?.lists.filter((list) => list.value?.archived) ?? [],
+  [selectedBoard]
 )
 
 useComputed(() => {

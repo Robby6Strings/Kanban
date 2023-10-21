@@ -1,9 +1,9 @@
-import { selectListItem } from "../list"
+import { selectListItem } from "../state"
 import { type ListItem as ListItemData } from "../types"
 
-export const ListItem = ({ item, listId }: { item: ListItemData; listId: string }) => {
+export const ListItem = ({ item, listId }: { item: ListItemData; listId: number }) => {
   return (
-    <button key={item.id} className="list-item" onclick={() => selectListItem(listId, item.id)}>
+    <button key={item.id} className="list-item" onclick={() => selectListItem(item, listId)}>
       {item.title || "New Item"}
     </button>
   )
