@@ -1,4 +1,5 @@
 import "./Board.css"
+import { useRef } from "cinnabun"
 import {
   activeLists,
   draggingBoard,
@@ -9,19 +10,24 @@ import {
 import { ItemList } from "./ItemList"
 
 export const Board = () => {
-  const handleMouseDown = () => {
+  const draggableRef = useRef()
+
+  const handleMouseDown = (e: MouseEvent) => {
+    if (!draggableRef.value) return
+    if (e.target !== draggableRef.value) return
     draggingBoard.value = true
   }
+
   const handleMouseUp = () => {
     draggingBoard.value = false
   }
+
   const handleMouseMove = (e: MouseEvent) => {
     if (!draggingBoard.value) return
     drag.value.dragCurrent = {
       x: e.movementX,
       y: e.movementY,
     }
-
     drag.notify()
   }
 
@@ -36,6 +42,7 @@ export const Board = () => {
       bind:children
     >
       <div
+        ref={draggableRef}
         watch={draggingBoard}
         bind:className={() =>
           "inner " + (draggingBoard.value ? "dragging" : "")

@@ -112,6 +112,7 @@
   align-items: center;
   gap: .5rem;
   text-align: center;
+  opacity: .5;
 }
 
 .add-list-item {
