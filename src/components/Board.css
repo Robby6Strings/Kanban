@@ -13,7 +13,7 @@
   min-height: 100%;
 }
 
-#board .inner.dragging {
+#board .inner.dragging, #board .inner.dragging *  {
   cursor: grabbing;
 }
 
@@ -22,10 +22,6 @@
   z-index: 1000;
   top: 0;
   left: 0;
-  cursor: grabbing;
-}
-
-#board #item-clone * {
   pointer-events: none;
 }
 

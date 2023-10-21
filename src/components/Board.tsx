@@ -33,7 +33,6 @@ export const Board = () => {
       clickedItem.value.dragging = true
       clickedItem.notify()
       itemClone.value = clickedItem.value.element
-      console.log("dragging", clickedItem.value)
       return
     } else if (clickedItem.value && clickedItem.value.dragging) {
     }
@@ -57,9 +56,10 @@ export const Board = () => {
     >
       <div
         ref={draggableRef}
-        watch={draggingBoard}
+        watch={[draggingBoard, clickedItem]}
         bind:className={() =>
-          "inner " + (draggingBoard.value ? "dragging" : "")
+          "inner " +
+          (draggingBoard.value || clickedItem.value?.dragging ? "dragging" : "")
         }
       >
         {() => activeLists.value.map((list) => <ItemList list={list} />)}

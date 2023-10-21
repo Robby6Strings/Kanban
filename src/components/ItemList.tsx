@@ -15,6 +15,46 @@ import {
 export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
   const dropAreaRef = useRef()
 
+  const handleListMouseOver = (e: MouseEvent) => {
+    if (!dropAreaRef.value) return
+    if (!clickedItem.value || !clickedItem.value.dragging) return
+    if (!list.value) return
+
+    const evt = e as MouseEvent
+    // find the closest item to the mouse
+    const elements = Array.from(dropAreaRef.value.children) || []
+    let closestItem: { el: Element; rect: DOMRect } | null = null
+    let closestDistance = Infinity
+    for (const element of elements) {
+      const itemRect = element.getBoundingClientRect()
+      const distance = Math.sqrt(
+        Math.pow(itemRect.x - evt.clientX, 2) +
+          Math.pow(itemRect.y - evt.clientY, 2)
+      )
+      if (distance < closestDistance) {
+        closestItem = { el: element, rect: itemRect }
+        closestDistance = distance
+      }
+    }
+
+    if (!closestItem) return
+
+    let side: "top" | "bottom" = "bottom"
+
+    // if the mouse is over the top half of the item, set the side to top
+    if (evt.clientY < closestItem.rect.y + closestItem.rect.height / 2) {
+      side = "top"
+    }
+
+    console.log(closestItem.el)
+    console.log(side)
+  }
+
+  dropAreaRef.subscribe((el) => {
+    if (!el) return
+    ;(el as HTMLElement).addEventListener("mousemove", handleListMouseOver)
+  })
+
   const actionsOpen = createSignal(false)
   const changeTitle = (e: Event) => {
     if (!list.value) return
