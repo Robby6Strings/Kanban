@@ -30,7 +30,7 @@ export const Board = () => {
       onmousedown={handleMouseDown}
       onmouseup={handleMouseUp}
       onmousemove={handleMouseMove}
-      id="listboard"
+      id="board"
       watch={[activeLists, selectedBoard]}
       bind:visible={() => !!selectedBoard.value}
       bind:children

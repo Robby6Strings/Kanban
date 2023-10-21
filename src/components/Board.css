@@ -1,12 +1,12 @@
-#listboard {
+#board {
   flex-grow: 1;
 }
 
-#listboard * {
+#board * {
   user-select: none;
 }
 
-#listboard .inner {
+#board .inner {
   min-width: 100%;
   display: flex;
   padding: 0.5rem;
@@ -14,6 +14,6 @@
   min-height: 100%;
 }
 
-#listboard .inner.dragging {
+#board .inner.dragging {
   cursor: grabbing;
 }
