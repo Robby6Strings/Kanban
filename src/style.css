@@ -165,7 +165,7 @@ input, textarea {
   font-family: inherit;
   font-size: .85em;
   font-weight: 400;
-  padding: 0.5em 0.75em;
+  padding: 0.5rem 0.75rem;
   border-radius: var(--radius);
   border: 1px solid transparent;
   background-color: #1a1a1a;
@@ -174,7 +174,7 @@ input, textarea {
 }
 textarea {
   resize: vertical;
-  width: 100%;
+  width: calc(100% - 1.5rem);
 }
 button {
   border-radius: var(--radius);
