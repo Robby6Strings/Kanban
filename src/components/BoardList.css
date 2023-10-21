@@ -22,13 +22,13 @@
   flex-direction: column;
   position: relative;
 }
-
 .board-list-item.selected {
-  background-color: var(--list-item-selected-bg-color);
+  background-color: var(--primary-color);
+  color: var(--title-color);
 }
 
+
 .board-list-item .board-list-item-button {
-  background-color: transparent;
   border: none;
   border-radius: var(--radius);
   color: var(--title-color);
@@ -38,11 +38,13 @@
   justify-content: flex-start;
   padding: 0.5rem 1rem;
   width: 100%;
-
+}
+.board-list-item .board-list-item-button.btn-primary {
+  background-color: var(--primary-color);
+  color: #fff;
 }
 
 .board-list-item-title {
-  color: var(--title-color);
   font-size: .75rem;
   font-weight: 700;
 }

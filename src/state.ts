@@ -1,5 +1,11 @@
 import { Signal, createSignal, useComputed } from "cinnabun"
-import { ListBoard, ListItem, ReactiveListboard } from "./types"
+import {
+  List,
+  ListBoard,
+  ListItem,
+  ReactiveList,
+  ReactiveListboard,
+} from "./types"
 import {
   addItem,
   addList,
@@ -8,6 +14,8 @@ import {
   loadLists,
   deleteList as db_deleteList,
   archiveList as db_archiveList,
+  updateItem,
+  deleteItem,
 } from "./db"
 
 export function asyncSignal<T>(promise: Promise<T>): Signal<T | null> {
@@ -42,18 +50,21 @@ async function load() {
 export async function selectBoard(board: ListBoard) {
   if (selectedBoard.value?.id === board.id) return
 
-  const lists = (await loadLists(board.id)).map((list) =>
-    createSignal({
-      ...list,
-      items: asyncSignal(loadItems(list.id)),
+  const lists = await loadLists(board.id)
+  const asSignals = await Promise.all(
+    lists.map(async (list) => {
+      const items = await loadItems(list.id)
+      return createSignal({
+        ...list,
+        items: createSignal(items),
+      })
     })
   )
-
   console.log(lists)
 
   selectedBoard.value = {
     ...board,
-    lists,
+    lists: asSignals,
   }
 }
 export async function addBoardList(boardId: number) {
@@ -61,7 +72,7 @@ export async function addBoardList(boardId: number) {
   selectedBoard.value?.lists.push(
     createSignal({
       ...lst,
-      items: asyncSignal(loadItems(lst.id)),
+      items: createSignal([] as ListItem[]),
     })
   )
   selectedBoard.notify()
@@ -104,14 +115,62 @@ export async function archiveList(listId: number) {
   selectedBoard.notify()
 }
 
+const getListItemIdx = (item: ListItem, list: Signal<ReactiveList>) => {
+  const idx = list.value?.items.value?.findIndex((i) => i.id === item.id)
+  if (idx === undefined) throw new Error("Item not found")
+
+  return idx
+}
+
+const getItemList = (item: ListItem) => {
+  const list = selectedBoard.value?.lists.find(
+    (list) => list.value?.id === item.listId
+  )
+  if (!list) throw new Error("List not found")
+
+  return list
+}
+
+export async function updateListItem(item: ListItem) {
+  const list = getItemList(item)
+  const index = getListItemIdx(item, list)
+
+  const res = await updateItem(item)
+
+  list.value.items.value![index] = res
+  list.value.items.notify()
+}
+
+export async function deleteListItem(item: ListItem) {
+  const list = getItemList(item)
+  const index = getListItemIdx(item, list)
+
+  await deleteItem(item)
+
+  list.value.items.value!.splice(index, 1)
+  list.value.items.notify()
+}
+
+export async function archiveListItem(item: ListItem) {
+  const list = getItemList(item)
+  const index = getListItemIdx(item, list)
+
+  item.archived = true
+  const res = await updateItem(item)
+
+  list.value.items.value![index] = res
+  list.value.items.notify()
+}
+
 export function selectListItem(item: ListItem) {
   selectedListItem.value = item
+  showSelectedListItem.value = true
 }
 export function deselectBoard() {
   selectedBoard.value = null
 }
 export function deselectListItem() {
-  selectedListItem.value = null
+  showSelectedListItem.value = false
 }
 
 export const activeLists = useComputed(

@@ -17,7 +17,7 @@ export const BoardList = () => {
         <h3>Board List</h3>
       </div>
       <div id="add-board">
-        <button type="button" onclick={createBoard}>
+        <button type="button" className="btn-primary" onclick={createBoard}>
           Create a board...
         </button>
       </div>
@@ -33,15 +33,14 @@ export const BoardList = () => {
 
 const BoardListItem = ({ board }: { board: ListBoard }) => {
   return (
-    <div
-      watch={selectedBoard}
-      bind:className={() =>
-        selectedBoard.value?.id === board.id
-          ? "board-list-item selected"
-          : "board-list-item"
-      }
-    >
+    <div className="board-list-item">
       <button
+        watch={selectedBoard}
+        bind:className={() =>
+          selectedBoard.value?.id === board.id
+            ? "board-list-item-button btn-primary"
+            : "board-list-item-button"
+        }
         onclick={() => selectBoard(board)}
         type="button"
         className="board-list-item-button"

@@ -14,16 +14,17 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
+  --primary-color: #646cff;
+  --primary-color-dark: #444787
+
   --header-bg-color: #1a1a1a;
   --nav-bg-color: #1a1a1a;
   --list-bg-color: #2c2c2c;
   --list-actions-menu-bg-color: #4a4a4a;
   --list-item-bg-color: #3a3a3a;
-  --add-list-item-bg-color: #313131;
   --radius: 8px;
   --color: #e6e6e6;
   --title-color: #ffffff;
-  --list-item-selected-bg-color: #646cff;
 }
 
 * {
@@ -86,6 +87,23 @@ header {
   background-color: var(--header-bg-color);
   width: 100vw;
 }
+
+
+input, textarea {
+  font-family: inherit;
+  font-size: .85em;
+  font-weight: 400;
+  padding: 0.5em 0.75em;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background-color: #1a1a1a;
+  color: var(--color);
+  transition: border-color 0.25s;
+}
+textarea {
+  resize: vertical;
+  width: 100%;
+}
 button {
   border-radius: var(--radius);
   border: 1px solid transparent;
@@ -98,7 +116,7 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--primary-color);
 }
 button:focus,
 button:focus-visible {
@@ -118,6 +136,31 @@ button:focus-visible {
   color: var(--title-color);
 }
 
+.bg-primary {
+  background-color: var(--primary-color);
+}
+
+.bg-primary-dark {
+  background-color: var(--primary-color-dark);
+}
+
+.text-primary {
+  color: var(--primary-color);
+}
+
+.text-primary-dark {
+  color: var(--primary-color-dark);
+}
+
+.text-light {
+  color: #e6e6e6;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
 
 
 @media (prefers-color-scheme: light) {
@@ -130,7 +173,6 @@ button:focus-visible {
     --list-bg-color: #f1f2f6;
     --list-actions-menu-bg-color: #ffffff;
     --list-item-bg-color: #fcfcff;
-    --add-list-item-bg-color: #f2f2f4;
   }
   a:hover {
     color: #747bff;

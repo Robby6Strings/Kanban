@@ -45,6 +45,7 @@ export const ListBoard = () => {
         <div className="add-list">
           <button
             type="button"
+            className="btn-primary"
             onclick={() => addBoardList(selectedBoard.value!.id)}
           >
             Add a list...

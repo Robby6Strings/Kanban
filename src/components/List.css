@@ -113,7 +113,6 @@
 
 .add-list-item {
   padding: .5rem;
-  background-color: var(--add-list-item-bg-color);
   border-radius: var(--radius);
   display: block;
   align-items: center;

@@ -5,7 +5,7 @@ export type ReactiveListboard = ListBoard & {
 }
 
 export type ReactiveList = List & {
-  items: Signal<ListItem[] | null>
+  items: Signal<ListItem[]>
 }
 
 export type ListBoard = {

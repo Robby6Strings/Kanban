@@ -27,7 +27,8 @@
   --padding: 1rem 1.5rem;
   width: 350px;
   max-width: calc(100vw - 2rem);
-  
+  border-radius: var(--radius);
+  overflow: hidden;
 }
 .modal-outer ~ .modal-outer .modal {
   max-width: calc(100vw - 1rem);
@@ -75,7 +76,7 @@
 
 .modal-body {
   padding: var(--padding);
-  background-color: rgba(0, 0, 0, .05);
+  background-color: rgba(255,255,255, .05);
 }
 @media (prefers-color-scheme: light) {
   .modal-body {

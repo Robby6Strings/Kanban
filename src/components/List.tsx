@@ -75,7 +75,7 @@ export const List = ({ list }: { list: Signal<ReactiveList> }) => {
       <div className="list-footer">
         <button
           type="button"
-          className="add-list-item"
+          className="add-list-item btn-primary"
           onclick={() => addListItem(list.value!.id)}
         >
           + Add another card
