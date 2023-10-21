@@ -1,7 +1,7 @@
 import { idb, model, Field } from "async-idb-orm"
 import { List, ListItem, ReactiveListboard } from "./types"
 import { Signal } from "cinnabun"
-import { asyncSignal, selectedBoard } from "./state"
+import { asyncSignal, selectBoard, selectedBoard } from "./state"
 
 const items = model({
   id: Field.number({ primaryKey: true }),
@@ -31,13 +31,17 @@ const db = idb("kanban", { boards, lists, items })
 
 export const loadBoards = async (): Promise<ReactiveListboard[]> => {
   const boards = await db.boards.all()
-  return boards.map((board) => ({
-    id: board.id,
-    title: board.title,
-    created: board.created,
-    archived: board.archived,
-    lists: board.lists.map((list) => asyncSignal(db.lists.read(list)) as Signal<List | null>),
-  }))
+  const res = boards
+    .map((board) => ({
+      id: board.id,
+      title: board.title,
+      created: board.created,
+      archived: board.archived,
+      lists: board.lists.map((list) => asyncSignal(db.lists.read(list)) as Signal<List | null>),
+    }))
+    .reverse()
+  if (res.length > 0) selectBoard(res[0])
+  return res
 }
 
 export const updateBoard = async (board: ReactiveListboard) => {

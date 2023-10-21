@@ -6,7 +6,6 @@ import { BoardList } from "./components/BoardList"
 export const App = () => {
   return (
     <>
-      <Header />
       <main>
         <nav className="nav">
           <BoardList />

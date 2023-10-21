@@ -1,5 +1,5 @@
 #board-list {
-  padding: 1rem;
+  padding: 6px;
 }
 
 .board-list-header h3 {
@@ -45,4 +45,25 @@
   color: var(--title-color);
   font-size: .75rem;
   font-weight: 700;
+}
+
+#add-board {
+  color: var(--title-color);
+  cursor: pointer;
+  display: flex;
+  font-weight: 700;
+  width: 100%;
+  margin-bottom: .5rem;
+}
+#add-board button {
+  background-color: transparent;
+  border: none;
+  border-radius: var(--radius);
+  color: var(--title-color);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  text-align: center;
 }

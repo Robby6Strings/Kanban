@@ -68,6 +68,9 @@ main {
 
 nav {
   background-color: var(--nav-bg-color);
+  max-height: 100vh;
+  overflow-y: auto;
+  
 }
 
 header {

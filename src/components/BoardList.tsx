@@ -6,7 +6,7 @@ import { ReactiveListboard } from "../types"
 export const BoardList = () => {
   const createBoard = async () => {
     const newBoard = await addBoard()
-    boards.value?.push(newBoard)
+    boards.value?.splice(0, 0, newBoard)
     boards.notify()
     selectBoard(newBoard)
     console.log(boards.value)
@@ -16,14 +16,15 @@ export const BoardList = () => {
       <div className="board-list-header">
         <h3>Board List</h3>
       </div>
+      <div id="add-board">
+        <button type="button" onclick={createBoard}>
+          Create a board...
+        </button>
+      </div>
+
       <div className="board-list-items">
         <div watch={boards} bind:children className="board-list-items-inner">
           {() => boards.value?.map((board) => <BoardListItem board={board} />)}
-          <div className="board-list-item">
-            <button type="button" onclick={createBoard}>
-              +
-            </button>
-          </div>
         </div>
       </div>
     </div>
