@@ -91,6 +91,11 @@
   flex-direction: column;
   padding: .5rem;
   border-radius: var(--radius);
+  transition: background-color .2s ease-in-out;
+}
+
+.list-items.dragging .list-items-inner {
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 .list-item {

@@ -124,7 +124,14 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
           </ClickOutsideListener>
         </div>
       </div>
-      <div className="list-items">
+      <div
+        watch={listItemDragTarget}
+        bind:className={() =>
+          `list-items ${
+            listItemDragTarget.value?.listId === list.value.id ? "dragging" : ""
+          }`
+        }
+      >
         <div
           onMounted={(self) => {
             dropAreaComponentRef.value = self
