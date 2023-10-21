@@ -139,7 +139,7 @@ nav {
   background-color: var(--nav-bg-color);
   max-height: 100vh;
   overflow-y: auto;
-  min-width: 180px;
+  min-width: 240px;
   position: sticky;
   left: 0;
   top: 0;
