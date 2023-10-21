@@ -1,11 +1,10 @@
 import "./List.css"
-import type { List as ListData, ReactiveList } from "../types"
+import type { ReactiveList } from "../types"
 import { ListItem } from "./ListItem"
 import { Signal, createSignal } from "cinnabun"
 import { ClickOutsideListener } from "cinnabun/listeners"
 import { MoreIcon } from "./icons/MoreIcon"
-import { boards } from "../state"
-import { addItem, archiveList, deleteList } from "../db"
+import { addListItem, archiveList, deleteList } from "../state"
 
 export const List = ({ list }: { list: Signal<ReactiveList> }) => {
   const actionsOpen = createSignal(false)
@@ -43,10 +42,10 @@ export const List = ({ list }: { list: Signal<ReactiveList> }) => {
               className="list-actions-menu"
               bind:visible={() => actionsOpen.value}
             >
-              <button type="button" onclick={() => deleteList(list.value!)}>
+              <button type="button" onclick={() => deleteList(list.value!.id)}>
                 Delete list
               </button>
-              <button type="button" onclick={() => archiveList(list.value!)}>
+              <button type="button" onclick={() => archiveList(list.value!.id)}>
                 Archive list
               </button>
             </div>
@@ -54,26 +53,30 @@ export const List = ({ list }: { list: Signal<ReactiveList> }) => {
         </div>
       </div>
       <div className="list-items">
-        <div className="list-items-inner" watch={list} bind:children>
+        <div
+          className="list-items-inner"
+          watch={list.value.items}
+          bind:children
+        >
           {() =>
-            list.value.items.value?.map((item) => (
-              <ListItem item={item} listId={list.value!.id} />
-            ))
+            list.value.items.value?.map((item) => <ListItem item={item} />)
           }
-          <div
-            watch={boards}
-            className="list-item default"
-            bind:visible={() => list.value?.items.value?.length === 0}
-          >
-            <i>No items yet</i>
-          </div>
+          {() =>
+            !list.value.items.value || list.value.items.value.length === 0 ? (
+              <div className="list-item default">
+                <i>No items yet</i>
+              </div>
+            ) : (
+              <></>
+            )
+          }
         </div>
       </div>
       <div className="list-footer">
         <button
           type="button"
           className="add-list-item"
-          onclick={() => addItem(list.value!.id)}
+          onclick={() => addListItem(list.value!.id)}
         >
           + Add another card
         </button>
