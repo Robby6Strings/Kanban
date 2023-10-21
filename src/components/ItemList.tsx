@@ -1,11 +1,12 @@
 import "./ItemList.css"
-import type { ReactiveList } from "../types"
-import { Signal, createSignal, useRef } from "cinnabun"
+import type { ListItem, ReactiveList } from "../types"
+import { For, Signal, createSignal, useRef } from "cinnabun"
 import { ClickOutsideListener } from "cinnabun/listeners"
 import { MoreIcon } from "./icons/MoreIcon"
 import {
   addListItem,
   archiveList,
+  clickedItem,
   deleteList,
   selectListItem,
   updateList,
@@ -66,17 +67,56 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
           watch={list.value.items}
           bind:children
         >
-          {() =>
+          <For
+            each={list.value.items}
+            template={(item) => {
+              return (
+                <button
+                  key={item.id}
+                  className="list-item"
+                  onclick={() => selectListItem(item)}
+                  onmousedown={() =>
+                    (clickedItem.value = {
+                      id: item.id,
+                      dragging: false,
+                    })
+                  }
+                  //onmouseup={() => (clickedItem.value = null)}
+                  watch={[clickedItem]}
+                  bind:visible={() =>
+                    !clickedItem.value ||
+                    !clickedItem.value.dragging ||
+                    clickedItem.value.id !== item.id
+                  }
+                >
+                  {() => item.title || "New Item"}
+                </button>
+              )
+            }}
+          />
+          {/* {() =>
             list.value.items.value?.map((item) => (
               <button
-                key={item.id}
                 className="list-item"
                 onclick={() => selectListItem(item)}
+                onmousedown={() =>
+                  (clickedItem.value = {
+                    id: item.id,
+                    dragging: false,
+                  })
+                }
+                //onmouseup={() => (clickedItem.value = null)}
+                watch={clickedItem}
+                bind:visible={() =>
+                  !clickedItem.value ||
+                  !clickedItem.value.dragging ||
+                  clickedItem.value.id !== item.id
+                }
               >
                 {item.title || "New Item"}
               </button>
             ))
-          }
+          } */}
           {() =>
             !list.value.items.value || list.value.items.value.length === 0 ? (
               <div className="list-item default">

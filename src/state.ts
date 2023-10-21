@@ -42,6 +42,11 @@ export const selectedBoard = createSignal<ReactiveListboard | null>(null)
 export const selectedListItem = createSignal<ListItem | null>(null)
 export const showSelectedListItem = createSignal(false)
 
+export const clickedItem = createSignal<{
+  id: number
+  dragging: boolean
+} | null>(null)
+
 async function load() {
   const res = await loadBoards()
   if (res.length > 0) selectBoard(res[0])

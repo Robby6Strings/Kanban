@@ -31,4 +31,5 @@ export type ListItem = {
   refereceItems: number[]
   archived: boolean
   created: Date
+  dragging?: boolean
 }

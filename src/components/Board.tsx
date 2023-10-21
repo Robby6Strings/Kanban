@@ -1,11 +1,12 @@
 import "./Board.css"
-import { useRef } from "cinnabun"
+import { createSignal, useRef } from "cinnabun"
 import {
   activeLists,
   draggingBoard,
   drag,
   selectedBoard,
   addBoardList,
+  clickedItem,
 } from "../state"
 import { ItemList } from "./ItemList"
 
@@ -20,9 +21,16 @@ export const Board = () => {
 
   const handleMouseUp = () => {
     draggingBoard.value = false
+    if (clickedItem.value) clickedItem.value.dragging = false
+    clickedItem.value = null
   }
 
   const handleMouseMove = (e: MouseEvent) => {
+    if (clickedItem.value && !clickedItem.value.dragging) {
+      clickedItem.value.dragging = true
+      clickedItem.notify()
+      return
+    }
     if (!draggingBoard.value) return
     drag.value.dragCurrent = {
       x: e.movementX,
