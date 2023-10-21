@@ -132,7 +132,7 @@ h1 {
 main {
   flex-grow: 1;
   display: flex;
-
+  width: fit-content;
 }
 
 nav {
