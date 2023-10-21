@@ -13,11 +13,12 @@
   flex-direction: column;
   width: 250px;
   min-width: 250px;
+  margin-top: .5rem;
 }
 
 .list {
   background-color: var(--list-bg-color);
-  margin: 0 .5rem;
+  margin-inline: .5rem;
   border-radius: var(--radius);
   overflow: hidden;
   height: fit-content;
