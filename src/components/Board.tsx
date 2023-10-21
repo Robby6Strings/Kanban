@@ -23,8 +23,10 @@ export const Board = () => {
 
   const handleMouseUp = () => {
     draggingBoard.value = false
-    if (clickedItem.value) clickedItem.value.dragging = false
-    clickedItem.value = null
+    if (clickedItem.value) {
+      clickedItem.value.dragging = false
+      clickedItem.value = null
+    }
     itemClone.value = null
   }
 

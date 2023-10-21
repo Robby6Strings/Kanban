@@ -144,26 +144,6 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
             each={list.value.items}
             template={(item, idx) => <ListItemButton item={item} idx={idx} />}
           />
-
-          {() =>
-            !list.value.items.value || list.value.items.value.length === 0 ? (
-              <div
-                watch={listItemDragTarget}
-                bind:className={() =>
-                  `list-item default ${
-                    listItemDragTarget.value?.index === 0 &&
-                    list.value?.id === listItemDragTarget.value?.listId
-                      ? `drop-target ${listItemDragTarget.value?.side}`
-                      : ""
-                  }`
-                }
-              >
-                <i>No items yet</i>
-              </div>
-            ) : (
-              <></>
-            )
-          }
         </div>
       </div>
       <div className="list-footer">
@@ -180,11 +160,11 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
 }
 
 const ListItemButton = ({ item, idx }: { item: ListItem; idx: number }) => {
-  const btnRef = useRef()
+  const componentRef = createSignal<Component | null>(null)
   return (
     <button
+      onMounted={(self) => (componentRef.value = self)}
       onclick={() => selectListItem(item)}
-      ref={btnRef}
       key={item.id}
       watch={[clickedItem, listItemDragTarget]}
       bind:visible={() =>
@@ -200,19 +180,21 @@ const ListItemButton = ({ item, idx }: { item: ListItem; idx: number }) => {
             : ""
         }`
       }
-      onmousedown={(e: MouseEvent) =>
-        (clickedItem.value = {
+      onmousedown={(e: MouseEvent) => {
+        clickedItem.value = {
           id: item.id,
           listId: item.listId,
           index: idx,
           dragging: false,
-          element: btnRef.value!.cloneNode(true) as HTMLButtonElement,
+          element: componentRef.value!.element!.cloneNode(
+            true
+          ) as HTMLButtonElement,
           mouseOffset: {
             x: e.offsetX,
             y: e.offsetY,
           },
-        })
-      }
+        }
+      }}
     >
       {() => item.title || "New Item"}
     </button>
