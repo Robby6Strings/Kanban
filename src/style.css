@@ -15,6 +15,7 @@
   -webkit-text-size-adjust: 100%;
 
   --header-bg-color: #1a1a1a;
+  --nav-bg-color: #1a1a1a;
   --list-bg-color: #2c2c2c;
   --list-actions-menu-bg-color: #4a4a4a;
   --list-item-bg-color: #3a3a3a;
@@ -22,6 +23,7 @@
   --radius: 8px;
   --color: #e6e6e6;
   --title-color: #ffffff;
+  --list-item-selected-bg-color: #646cff;
 }
 
 * {
@@ -60,10 +62,12 @@ h1 {
 main {
   flex-grow: 1;
   display: flex;
-  padding: 1rem;
-  gap: 1rem;
   width: 100vw;
   overflow: auto;
+}
+
+nav {
+  background-color: var(--nav-bg-color);
 }
 
 header {
@@ -115,10 +119,11 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
+    background-color: #ffffff;
     --color: #213547;
     --title-color: #000000;
-    background-color: #ffffff;
     --header-bg-color: #ebecf0;
+    --nav-bg-color: #ebecf0;
     --list-bg-color: #f1f2f6;
     --list-actions-menu-bg-color: #ffffff;
     --list-item-bg-color: #fcfcff;

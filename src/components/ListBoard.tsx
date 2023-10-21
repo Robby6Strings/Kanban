@@ -1,5 +1,5 @@
 import "./ListBoard.css"
-import { activeLists, draggingBoard, drag } from "../state"
+import { activeLists, draggingBoard, drag, selectedBoard } from "../state"
 import { List } from "./List"
 import { addList } from "../db"
 
@@ -26,7 +26,8 @@ export const ListBoard = () => {
       onmouseup={handleMouseUp}
       onmousemove={handleMouseMove}
       id="listboard"
-      watch={[activeLists]}
+      watch={[activeLists, selectedBoard]}
+      bind:visible={() => !!selectedBoard.value}
       bind:children
     >
       <div

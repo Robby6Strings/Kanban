@@ -1,6 +1,6 @@
 import { idb, model, Field } from "async-idb-orm"
 import { List, ListItem, ReactiveListboard } from "./types"
-import { Signal, createSignal } from "cinnabun"
+import { Signal } from "cinnabun"
 import { asyncSignal, selectedBoard } from "./state"
 
 const items = model({
@@ -50,13 +50,18 @@ export const updateBoard = async (board: ReactiveListboard) => {
   })
 }
 
-export const addBoard = async (title: string) => {
-  return await db.boards.create({
-    title,
+export const addBoard = async () => {
+  const board = await db.boards.create({
+    title: "",
     created: new Date(),
     archived: false,
     lists: [],
   })
+  if (!board) throw new Error("Board not created")
+  return {
+    ...board,
+    lists: board.lists.map((list) => asyncSignal(db.lists.read(list)) as Signal<List | null>),
+  } as ReactiveListboard
 }
 
 export const updateList = async (list: List) => {

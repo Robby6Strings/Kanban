@@ -1,21 +1,46 @@
+import "./BoardList.css"
+import { addBoard } from "../db"
+import { boards, selectBoard, selectedBoard } from "../state"
+import { ReactiveListboard } from "../types"
+
 export const BoardList = () => {
+  const createBoard = async () => {
+    const newBoard = await addBoard()
+    boards.value?.push(newBoard)
+    boards.notify()
+    selectBoard(newBoard)
+    console.log(boards.value)
+  }
   return (
-    <div className="board-list">
+    <div id="board-list">
       <div className="board-list-header">
         <h3>Board List</h3>
       </div>
       <div className="board-list-items">
-        <div className="board-list-items-inner">
-          <div className="board-list-item default">
-            <div className="board-list-item-title">
-              <h4>Board 1</h4>
-            </div>
-            <div className="board-list-item-description">
-              <p>Board 1 Description</p>
-            </div>
+        <div watch={boards} bind:children className="board-list-items-inner">
+          {() => boards.value?.map((board) => <BoardListItem board={board} />)}
+          <div className="board-list-item">
+            <button type="button" onclick={createBoard}>
+              +
+            </button>
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+const BoardListItem = ({ board }: { board: ReactiveListboard }) => {
+  return (
+    <div
+      watch={selectedBoard}
+      bind:className={() =>
+        selectedBoard.value?.id === board.id ? "board-list-item selected" : "board-list-item"
+      }
+    >
+      <button onclick={() => selectBoard(board)} type="button" className="board-list-item-button">
+        <div className="board-list-item-title">{board.title || "New board"}</div>
+      </button>
     </div>
   )
 }
