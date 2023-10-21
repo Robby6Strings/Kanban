@@ -22,10 +22,11 @@
   z-index: 1000;
   top: 0;
   left: 0;
+  cursor: grabbing;
 }
 
 #board #item-clone * {
-  cursor: grabbing;
+  pointer-events: none;
 }
 
 
