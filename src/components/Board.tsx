@@ -29,6 +29,7 @@ export const Board = () => {
     if (clickedItem.value && !clickedItem.value.dragging) {
       clickedItem.value.dragging = true
       clickedItem.notify()
+      console.log("dragging", clickedItem.value)
       return
     }
     if (!draggingBoard.value) return

@@ -69,54 +69,9 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
         >
           <For
             each={list.value.items}
-            template={(item) => {
-              return (
-                <button
-                  key={item.id}
-                  className="list-item"
-                  onclick={() => selectListItem(item)}
-                  onmousedown={() =>
-                    (clickedItem.value = {
-                      id: item.id,
-                      dragging: false,
-                    })
-                  }
-                  //onmouseup={() => (clickedItem.value = null)}
-                  watch={[clickedItem]}
-                  bind:visible={() =>
-                    !clickedItem.value ||
-                    !clickedItem.value.dragging ||
-                    clickedItem.value.id !== item.id
-                  }
-                >
-                  {() => item.title || "New Item"}
-                </button>
-              )
-            }}
+            template={(item) => <ListItemButton item={item} />}
           />
-          {/* {() =>
-            list.value.items.value?.map((item) => (
-              <button
-                className="list-item"
-                onclick={() => selectListItem(item)}
-                onmousedown={() =>
-                  (clickedItem.value = {
-                    id: item.id,
-                    dragging: false,
-                  })
-                }
-                //onmouseup={() => (clickedItem.value = null)}
-                watch={clickedItem}
-                bind:visible={() =>
-                  !clickedItem.value ||
-                  !clickedItem.value.dragging ||
-                  clickedItem.value.id !== item.id
-                }
-              >
-                {item.title || "New Item"}
-              </button>
-            ))
-          } */}
+
           {() =>
             !list.value.items.value || list.value.items.value.length === 0 ? (
               <div className="list-item default">
@@ -138,5 +93,37 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
         </button>
       </div>
     </div>
+  )
+}
+
+const ListItemButton = ({ item }: { item: ListItem }) => {
+  const btnRef = useRef()
+  return (
+    <button
+      ref={btnRef}
+      key={item.id}
+      className="list-item"
+      onclick={() => selectListItem(item)}
+      onmousedown={(e: MouseEvent) =>
+        (clickedItem.value = {
+          id: item.id,
+          dragging: false,
+          element: btnRef.value!.cloneNode(true) as HTMLButtonElement,
+          mouseOffset: {
+            x: e.offsetX,
+            y: e.offsetY,
+          },
+        })
+      }
+      //onmouseup={() => (clickedItem.value = null)}
+      watch={[clickedItem]}
+      bind:visible={() =>
+        !clickedItem.value ||
+        !clickedItem.value.dragging ||
+        clickedItem.value.id !== item.id
+      }
+    >
+      {() => item.title || "New Item"}
+    </button>
   )
 }

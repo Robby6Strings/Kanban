@@ -45,6 +45,8 @@ export const showSelectedListItem = createSignal(false)
 export const clickedItem = createSignal<{
   id: number
   dragging: boolean
+  element: HTMLElement
+  mouseOffset: { x: number; y: number }
 } | null>(null)
 
 async function load() {
