@@ -153,7 +153,6 @@ export async function updateListItem(item: ListItem) {
   console.log(res, index, list.value.items.value)
 
   list.value.items.value![index] = res
-  //list.value.items.notify()
   list.notify()
 }
 
