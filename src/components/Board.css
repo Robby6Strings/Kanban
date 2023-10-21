@@ -16,3 +16,17 @@
 #board .inner.dragging {
   cursor: grabbing;
 }
+
+#board #item-clone {
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+}
+
+
+#board #item-clone button {
+  width: 218px;
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.5);
+}

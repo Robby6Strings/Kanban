@@ -36,6 +36,7 @@ export const drag = createSignal<DragState>({
 })
 
 export const rootElement = document.getElementById("app")!
+export const mousePos = createSignal({ x: 0, y: 0 })
 export const draggingBoard = createSignal(false)
 export const boards = asyncSignal(load())
 export const selectedBoard = createSignal<ReactiveListboard | null>(null)

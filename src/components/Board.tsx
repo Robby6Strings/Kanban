@@ -1,5 +1,5 @@
 import "./Board.css"
-import { createSignal, useRef } from "cinnabun"
+import { createSignal, useRef, RawHtml } from "cinnabun"
 import {
   activeLists,
   draggingBoard,
@@ -7,11 +7,13 @@ import {
   selectedBoard,
   addBoardList,
   clickedItem,
+  mousePos,
 } from "../state"
 import { ItemList } from "./ItemList"
 
 export const Board = () => {
   const draggableRef = useRef()
+  const itemClone = createSignal<HTMLElement | null>(null)
 
   const handleMouseDown = (e: MouseEvent) => {
     if (!draggableRef.value) return
@@ -23,14 +25,17 @@ export const Board = () => {
     draggingBoard.value = false
     if (clickedItem.value) clickedItem.value.dragging = false
     clickedItem.value = null
+    itemClone.value = null
   }
 
   const handleMouseMove = (e: MouseEvent) => {
     if (clickedItem.value && !clickedItem.value.dragging) {
       clickedItem.value.dragging = true
       clickedItem.notify()
+      itemClone.value = clickedItem.value.element
       console.log("dragging", clickedItem.value)
       return
+    } else if (clickedItem.value && clickedItem.value.dragging) {
     }
     if (!draggingBoard.value) return
     drag.value.dragCurrent = {
@@ -67,6 +72,20 @@ export const Board = () => {
             Add a list...
           </button>
         </div>
+      </div>
+      <div
+        watch={[itemClone, mousePos]}
+        id="item-clone"
+        bind:children
+        bind:style={() =>
+          "transform: translate(" +
+          (mousePos.value.x - (clickedItem.value?.mouseOffset.x || 0)) +
+          "px, " +
+          (mousePos.value.y - (clickedItem.value?.mouseOffset.y || 0)) +
+          "px)"
+        }
+      >
+        {() => <RawHtml html={clickedItem.value?.element.outerHTML || ""} />}
       </div>
     </div>
   )
