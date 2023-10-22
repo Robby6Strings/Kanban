@@ -1,5 +1,5 @@
 import "./Board.css"
-import { createSignal, useRef, RawHtml } from "cinnabun"
+import { createSignal, useRef, RawHtml, Signal } from "cinnabun"
 import {
   activeLists,
   draggingBoard,
@@ -13,6 +13,7 @@ import {
 import { ItemList } from "./ItemList"
 import { updateItem } from "../db"
 import { sortByOrder } from "../utils"
+import { ReactiveList } from "../types"
 
 export const Board = () => {
   const draggableRef = useRef()
@@ -41,18 +42,21 @@ export const Board = () => {
         let targetIndex = listItemDragTarget.value.index
         if (isOriginList && clickedItem.value.index < targetIndex) targetIndex--
 
-        const [targetList, sourceList] = [
-          selectedBoard.value!.lists.find(
-            (l) => l.value.id === listItemDragTarget.value!.listId
-          ),
-          selectedBoard.value!.lists.find(
-            (l) => l.value.id === clickedItem.value!.listId
-          ),
-        ]
+        let targetList: Signal<ReactiveList> | null = null
+        let sourceList: Signal<ReactiveList> | null = null
+        for (let i = 0; i < selectedBoard.value!.lists.length; i++) {
+          const l = selectedBoard.value!.lists[i]
+          if (l.value.id === clickedItem.value.listId) {
+            sourceList = l
+          }
+          if (l.value.id === listItemDragTarget.value!.listId) {
+            targetList = l
+          }
+        }
         if (!targetList) throw new Error("no target list")
         if (!sourceList) throw new Error("no source list")
-        const sourceIndex = clickedItem.value.index
 
+        const sourceIndex = clickedItem.value.index
         const item = sourceList.value.items.value.splice(sourceIndex, 1)[0]
 
         item.listId = targetList.value.id
