@@ -98,6 +98,12 @@
   background-color: rgba(0, 0, 0, 0.15);
 }
 
+@media (prefers-color-scheme: light) {
+  .list-items.dragging .list-items-inner {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+}
+
 .list-items.dragging.last .list-items-inner {
   padding-bottom: 3.5rem;
 }
