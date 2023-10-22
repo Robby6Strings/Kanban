@@ -92,7 +92,7 @@
   flex-direction: column;
   padding: .5rem;
   border-radius: var(--radius);
-  transition: background-color .15s ease, padding .05s ease;
+  transition: background-color .15s ease;
 }
 
 .list-items.dragging .list-items-inner {
@@ -116,7 +116,6 @@
   display: flex;
   align-items: center;
   gap: .5rem;
-  transition: all .05s ease;
 }
 
 

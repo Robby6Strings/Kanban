@@ -17,12 +17,12 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
   const dropAreaComponentRef = createSignal<Component | null>(null)
 
   const handleListMouseMove = (e: MouseEvent) => {
+    if (!list.value) return
     if (!dropAreaComponentRef.value) return
-    if (!clickedItem.value || !clickedItem.value.dragging) {
+    if (!clickedItem.value) {
       listItemDragTarget.value = null
       return
     }
-    if (!list.value) return
 
     // find the closest item to the mouse
     const elements = (
