@@ -41,7 +41,6 @@ export const draggingBoard = createSignal(false)
 export const listItemDragTarget = createSignal<null | {
   index: number
   listId: number
-  side: "top" | "bottom"
 }>(null)
 export const boards = asyncSignal(load())
 export const selectedBoard = createSignal<ReactiveListboard | null>(null)
@@ -63,19 +62,26 @@ async function load() {
   return res
 }
 
+const filterByOrder = <T extends { order: number }>(a: T, b: T) => {
+  if (a.order < b.order) return -1
+  if (a.order > b.order) return 1
+  return 0
+}
+
 export async function selectBoard(board: ListBoard) {
   if (selectedBoard.value?.id === board.id) return
 
   const lists = await loadLists(board.id)
   const asSignals = await Promise.all(
-    lists.map(async (list) => {
-      const items = await loadItems(list.id)
+    lists.sort(filterByOrder).map(async (list) => {
+      const items = (await loadItems(list.id)).sort(filterByOrder)
       return createSignal({
         ...list,
         items: createSignal(items),
       })
     })
   )
+  console.log("selectBoard", asSignals[0]?.value?.items.value)
   selectedBoard.value = {
     ...board,
     lists: asSignals,
@@ -83,7 +89,11 @@ export async function selectBoard(board: ListBoard) {
 }
 
 export async function addBoardList(boardId: number) {
-  const lst = await addList(boardId)
+  const maxListOrder = Math.max(
+    ...(selectedBoard.value?.lists.map((l) => l.value?.order) ?? []),
+    -1
+  )
+  const lst = await addList(boardId, maxListOrder + 1)
   selectedBoard.value?.lists.push(
     createSignal({
       ...lst,
@@ -91,17 +101,6 @@ export async function addBoardList(boardId: number) {
     })
   )
   selectedBoard.notify()
-}
-
-export async function addListItem(listId: number) {
-  const item = await addItem(listId)
-  const list = selectedBoard.value?.lists.find(
-    (list) => list.value?.id === listId
-  )
-  if (!list) return console.error("List not found")
-
-  list.value?.items.value?.push(item)
-  list.value.items.notify()
 }
 
 export async function updateList(list: ReactiveList) {
@@ -151,15 +150,30 @@ const getItemList = (item: ListItem) => {
   return list
 }
 
+export async function addListItem(listId: number) {
+  const list = selectedBoard.value?.lists.find(
+    (list) => list.value.id === listId
+  )
+  if (!list) return console.error("List not found")
+  const maxListOrder = Math.max(
+    ...list.value.items.value.map((i) => i.order),
+    -1
+  )
+  const item = await addItem(listId, maxListOrder + 1)
+
+  list.value.items.value.push(item)
+  list.value.items.notify()
+}
+
 export async function updateListItem(item: ListItem) {
   const list = getItemList(item)
   const index = getListItemIdx(item, list)
 
   const res = await updateItem(item)
 
-  console.log(res, index, list.value.items.value)
+  //console.log(res, index, list.value.items.value)
 
-  list.value.items.value![index] = res
+  list.value.items.value[index] = res
   list.notify()
 }
 

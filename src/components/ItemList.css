@@ -91,11 +91,15 @@
   flex-direction: column;
   padding: .5rem;
   border-radius: var(--radius);
-  transition: background-color .2s ease-in-out;
+  transition: background-color .15s ease, padding .05s ease;
 }
 
 .list-items.dragging .list-items-inner {
   background-color: rgba(0, 0, 0, 0.15);
+}
+
+.list-items.dragging.last .list-items-inner {
+  padding-bottom: 3.5rem;
 }
 
 .list-item {
@@ -105,16 +109,15 @@
   display: flex;
   align-items: center;
   gap: .5rem;
+  transition: all .05s ease;
 }
 
 
 
-.list-item.drop-target.top {
+.list-item.drop-target {
   margin-top: 3rem;
 }
-.list-item.drop-target.bottom {
-  margin-bottom: 3rem;
-}
+
 
 
 .list-item.default {

@@ -13,6 +13,7 @@ export type ListBoard = {
   title: string
   archived: boolean
   created: Date
+  order: number
 }
 
 export type List = {
@@ -21,6 +22,7 @@ export type List = {
   title: string
   archived: boolean
   created: Date
+  order: number
 }
 
 export type ListItem = {
@@ -31,4 +33,5 @@ export type ListItem = {
   refereceItems: number[]
   archived: boolean
   created: Date
+  order: number
 }

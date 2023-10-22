@@ -29,6 +29,7 @@ const items = model({
   created: Field.date({ default: () => new Date() }),
   archived: Field.boolean({ default: () => false }),
   refereceItems: Field.array(Field.number()),
+  order: Field.number({ default: () => 0 }),
 })
 
 const lists = model({
@@ -37,6 +38,7 @@ const lists = model({
   title: Field.string({ default: () => "" }),
   created: Field.date({ default: () => new Date() }),
   archived: Field.boolean({ default: () => false }),
+  order: Field.number({ default: () => 0 }),
 })
 
 const boards = model({
@@ -44,6 +46,7 @@ const boards = model({
   title: Field.string({ default: () => "" }),
   created: Field.date({ default: () => new Date() }),
   archived: Field.boolean({ default: () => false }),
+  order: Field.number({ default: () => 0 }),
 })
 
 const db = idb("kanban", { boards, lists, items })
@@ -72,8 +75,8 @@ const loadLists = (boardId: number) =>
 
 const updateList = (list: List) => db.lists.update(list) as Promise<List>
 
-const addList = (boardId: number) =>
-  db.lists.create({ boardId }) as Promise<List>
+const addList = (boardId: number, order = 0) =>
+  db.lists.create({ boardId, order }) as Promise<List>
 
 const deleteList = (list: List) => db.lists.delete(list.id) as Promise<void>
 
@@ -90,8 +93,8 @@ const loadItems = (listId: number) =>
 const updateItem = (item: ListItem) =>
   db.items.update(item) as Promise<ListItem>
 
-const addItem = (listId: number) =>
-  db.items.create({ listId, refereceItems: [] }) as Promise<ListItem>
+const addItem = (listId: number, order = 0) =>
+  db.items.create({ listId, refereceItems: [], order }) as Promise<ListItem>
 
 const deleteItem = (item: ListItem) => db.items.delete(item.id) as Promise<void>
 

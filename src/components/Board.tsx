@@ -8,8 +8,11 @@ import {
   addBoardList,
   clickedItem,
   mousePos,
+  listItemDragTarget,
+  updateListItem,
 } from "../state"
 import { ItemList } from "./ItemList"
+import { updateItem } from "../db"
 
 export const Board = () => {
   const draggableRef = useRef()
@@ -21,9 +24,69 @@ export const Board = () => {
     draggingBoard.value = true
   }
 
-  const handleMouseUp = () => {
+  const handleMouseUp = async () => {
     draggingBoard.value = false
     if (clickedItem.value) {
+      const isOriginList =
+        listItemDragTarget.value?.listId === clickedItem.value.listId
+
+      const movedItem = !(
+        isOriginList &&
+        listItemDragTarget.value?.index === clickedItem.value.index + 1
+      )
+
+      if (movedItem && clickedItem.value.dragging && listItemDragTarget.value) {
+        //debugger
+
+        let targetIndex = listItemDragTarget.value.index
+        if (isOriginList && clickedItem.value.index < targetIndex) targetIndex--
+
+        const [targetList, sourceList] = [
+          selectedBoard.value!.lists.find(
+            (l) => l.value.id === listItemDragTarget.value!.listId
+          ),
+          selectedBoard.value!.lists.find(
+            (l) => l.value.id === clickedItem.value!.listId
+          ),
+        ]
+        if (!targetList) throw new Error("no target list")
+        if (!sourceList) throw new Error("no source list")
+        const sourceIndex = clickedItem.value.index
+
+        const item = sourceList.value.items.value.splice(sourceIndex, 1)[0]
+
+        item.listId = targetList.value.id
+        item.order = targetIndex
+        targetList.value.items.value.splice(targetIndex, 0, item)
+
+        let itemUpdates = [item]
+
+        for (let i = 0; i < targetList.value.items.value.length; i++) {
+          const _item = targetList.value.items.value[i]
+          if (_item.id === item.id) continue
+          if (_item.order !== i) {
+            _item.order = i
+            itemUpdates.push(_item)
+          }
+        }
+        for (let i = 0; i < sourceList.value.items.value.length; i++) {
+          const _item = sourceList.value.items.value[i]
+          if (_item.id === item.id) continue
+          if (_item.order !== i) {
+            _item.order = i
+            itemUpdates.push(_item)
+          }
+        }
+        await Promise.all(itemUpdates.map(updateItem))
+
+        targetList.value.items.value.sort((a, b) => a.order - b.order)
+        if (!isOriginList) {
+          sourceList.value.items.value.sort((a, b) => a.order - b.order)
+        }
+
+        selectedBoard.notify()
+      }
+      listItemDragTarget.value = null
       clickedItem.value.dragging = false
       clickedItem.value = null
     }

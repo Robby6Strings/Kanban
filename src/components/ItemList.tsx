@@ -24,51 +24,33 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
     }
     if (!list.value) return
 
-    const evt = e as MouseEvent
     // find the closest item to the mouse
-    const el = dropAreaComponentRef.value.element as HTMLElement
-    const elements = Array.from(el.children) || []
-    //console.log(elements)
-    let closestDistance = Infinity
-    let index: number | null = null
-    let side: "top" | "bottom" = "bottom"
-
-    for (let i = 0; i < elements.length; i++) {
-      const element = elements[i]
-      if (element.classList.contains("default")) {
-        index = 0
-        side = "top"
-        break
-      }
-      const itemRect = element.getBoundingClientRect()
-      const distance = Math.sqrt(
-        Math.pow(itemRect.x - evt.clientX, 2) +
-          Math.pow(itemRect.y - evt.clientY, 2)
-      )
-      if (distance < closestDistance) {
-        index = i
-        side = evt.clientY < itemRect.y + itemRect.height / 2 ? "top" : "bottom"
-        closestDistance = distance
-      }
-    }
-
-    if (index === null) {
-      listItemDragTarget.value = null
-      return
-    }
-
-    if (
-      listItemDragTarget.value?.index === index &&
-      listItemDragTarget.value?.side === side
-    )
-      return
+    const elements = (
+      dropAreaComponentRef.value.children[0]! as Component
+    ).children
+      .filter((c) => (c as Component).props.key !== clickedItem.value?.id)
+      .map((c) => (c as Component).element as HTMLElement)
 
     const isOriginList = clickedItem.value.listId === list.value.id
-    if (isOriginList && index >= clickedItem.value.index) {
-      index++
+
+    let index: number = elements.length
+
+    const draggedItemTop = e.clientY - clickedItem.value.mouseOffset.y
+
+    for (let i = 0; i < elements.length; i++) {
+      const element = elements[i] as HTMLElement
+      const rect = element.getBoundingClientRect()
+      if (draggedItemTop < rect.top) {
+        index = i
+        break
+      }
     }
 
-    listItemDragTarget.value = { index, side, listId: list.value.id }
+    if (isOriginList) {
+      if (clickedItem.value.index <= index) index++
+    }
+
+    listItemDragTarget.value = { index, listId: list.value.id }
   }
 
   const actionsOpen = createSignal(false)
@@ -121,17 +103,19 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
         bind:className={() =>
           `list-items ${
             listItemDragTarget.value?.listId === list.value.id ? "dragging" : ""
+          } ${
+            listItemDragTarget.value?.index === list.value.items.value.length
+              ? "last"
+              : ""
           }`
         }
       >
         <div
           onMounted={(self) => {
             dropAreaComponentRef.value = self
-            ;(self.element! as HTMLElement).addEventListener(
-              "mousemove",
-              handleListMouseMove
-            )
-            ;(self.element! as HTMLElement).addEventListener(
+            const el = self.element as HTMLElement
+            el.addEventListener("mousemove", handleListMouseMove)
+            el.addEventListener(
               "mouseleave",
               () => (listItemDragTarget.value = null)
             )
@@ -144,6 +128,22 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
             each={list.value.items}
             template={(item, idx) => <ListItemButton item={item} idx={idx} />}
           />
+
+          <div
+            watch={[listItemDragTarget, list.value.items]}
+            bind:visible={() =>
+              !list.value.items.value || list.value.items.value.length === 0
+            }
+            bind:className={() =>
+              `list-item default ${
+                listItemDragTarget.value?.listId === list.value?.id
+                  ? "drop-target"
+                  : ""
+              }`
+            }
+          >
+            <i>No items yet</i>
+          </div>
         </div>
       </div>
       <div className="list-footer">
@@ -161,6 +161,7 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
 
 const ListItemButton = ({ item, idx }: { item: ListItem; idx: number }) => {
   const componentRef = createSignal<Component | null>(null)
+  if (!item) return <></>
   return (
     <button
       onMounted={(self) => (componentRef.value = self)}
@@ -175,8 +176,8 @@ const ListItemButton = ({ item, idx }: { item: ListItem; idx: number }) => {
       bind:className={() =>
         `list-item ${
           listItemDragTarget.value?.index === idx &&
-          item.listId === listItemDragTarget.value?.listId
-            ? `drop-target ${listItemDragTarget.value?.side}`
+          listItemDragTarget.value?.listId === item.listId
+            ? "drop-target"
             : ""
         }`
       }
