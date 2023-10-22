@@ -192,9 +192,9 @@ export async function archiveListItem(item: ListItem) {
   const index = getListItemIdx(item, list)
 
   item.archived = true
-  const res = await updateItem(item)
+  await updateItem(item)
 
-  list.value.items.value![index] = res
+  list.value.items.value.splice(index, 1)
   list.value.items.notify()
 }
 
