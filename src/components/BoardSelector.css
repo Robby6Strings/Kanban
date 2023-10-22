@@ -1,0 +1,71 @@
+#board-list {
+  display: flex;
+  padding: 0.5rem 1rem;
+  gap: 1rem;
+  align-items: center;
+}
+
+.board-list-header h3 {
+  margin: 0;
+}
+
+.board-list-selector {
+  display: flex;  
+  position: relative;
+  min-width: 160px;
+}
+.board-list-selector > button {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  width: 100%;
+  justify-content: space-between;
+  padding: 0 .5rem;
+}
+
+.board-list-selector > button > button:hover {
+  background-color: rgba(0,0,0,.15);
+}
+
+.board-list-dropdown {
+  position: absolute;
+  top: 100%;
+  min-width: 100%;
+  background: #333;
+  box-shadow: 2px 2px 8px 3px rgba(0, 0, 0, .15);
+  padding: 0.5rem;
+  border-radius: var(--radius);
+
+}
+
+.board-list-item:not(:last-child) {
+  margin-bottom: .5rem
+}
+.board-list-item button {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  transition: border-color 0.25s;
+}
+
+.board-list-item button:not(.btn-primary) {
+  background-color: transparent;
+  color: var(--color);
+}
+
+.board-list-item button:not(.btn-primary):hover {
+  background-color: rgba(0,0,0,.15);
+}
+
+@media (prefers-color-scheme:light) {
+  .board-list-dropdown {
+    background: #fff;
+  }
+  .board-list-item button:not(.btn-primary):hover {
+    background-color: rgba(0, 0, 0, .05);
+  }
+}

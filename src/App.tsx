@@ -1,6 +1,6 @@
 import { Board } from "./components/Board"
 import { ItemModal } from "./components/ItemModal"
-import { BoardList } from "./components/BoardList"
+import { BoardSelector } from "./components/BoardSelector"
 import { mousePos } from "./state"
 
 export const App = () => {
@@ -12,7 +12,7 @@ export const App = () => {
         }}
       >
         <nav className="nav">
-          <BoardList />
+          <BoardSelector />
         </nav>
         <Board />
         <ItemModal />

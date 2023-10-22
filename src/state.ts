@@ -17,6 +17,7 @@ import {
   updateList as db_updateList,
   updateItem,
   deleteItem,
+  addBoard,
 } from "./db"
 import { sortByOrder } from "./utils"
 
@@ -59,7 +60,11 @@ export const clickedItem = createSignal<{
 
 async function load() {
   const res = await loadBoards()
-  if (res.length > 0) selectBoard(res[0])
+  if (res.length === 0) {
+    const board = await addBoard()
+    res.push(board)
+  }
+  selectBoard(res[0])
   return res
 }
 
