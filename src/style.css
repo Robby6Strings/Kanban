@@ -20,7 +20,7 @@
 
 
   --header-bg-color: #1a1a1a;
-  --nav-bg-color: #1a1a1a;
+  --nav-bg-color: #1d1d1d;
   --list-bg-color: #2c2c2c;
   --list-actions-menu-bg-color: #464646;
   --list-item-bg-color: #3a3a3a;
@@ -132,12 +132,13 @@ h1 {
 main {
   flex-grow: 1;
   display: flex;
+  flex-direction: column;
   width: fit-content;
 }
 
 nav {
   background-color: var(--nav-bg-color);
-  max-height: 100vh;
+  max-width: 100vw;
   overflow-y: auto;
   min-width: 240px;
   position: sticky;
