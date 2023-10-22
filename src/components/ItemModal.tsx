@@ -33,6 +33,11 @@ export const ItemModal = () => {
           oninput={changeTitle}
           watch={selectedListItem}
           bind:value={() => selectedListItem.value?.title || ""}
+          onMounted={(self) => {
+            if (!selectedListItem.value?.title) {
+              self.element!.focus()
+            }
+          }}
         />
 
         <div className="list-actions">
