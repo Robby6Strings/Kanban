@@ -9,10 +9,10 @@ import {
   clickedItem,
   mousePos,
   listItemDragTarget,
-  updateListItem,
 } from "../state"
 import { ItemList } from "./ItemList"
 import { updateItem } from "../db"
+import { sortByOrder } from "../utils"
 
 export const Board = () => {
   const draggableRef = useRef()
@@ -79,9 +79,9 @@ export const Board = () => {
         }
         await Promise.all(itemUpdates.map(updateItem))
 
-        targetList.value.items.value.sort((a, b) => a.order - b.order)
+        targetList.value.items.value.sort(sortByOrder)
         if (!isOriginList) {
-          sourceList.value.items.value.sort((a, b) => a.order - b.order)
+          sourceList.value.items.value.sort(sortByOrder)
         }
 
         selectedBoard.notify()

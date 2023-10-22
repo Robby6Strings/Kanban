@@ -1,5 +1,7 @@
 #board {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 #board * {
@@ -11,6 +13,7 @@
   display: flex;
   cursor: grab;
   min-height: 100%;
+  flex-grow: 1;
 }
 
 #board .inner.dragging, #board .inner.dragging *  {

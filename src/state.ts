@@ -18,6 +18,7 @@ import {
   updateItem,
   deleteItem,
 } from "./db"
+import { sortByOrder } from "./utils"
 
 export function asyncSignal<T>(promise: Promise<T>): Signal<T | null> {
   const signal = createSignal<T | null>(null)
@@ -62,19 +63,13 @@ async function load() {
   return res
 }
 
-const filterByOrder = <T extends { order: number }>(a: T, b: T) => {
-  if (a.order < b.order) return -1
-  if (a.order > b.order) return 1
-  return 0
-}
-
 export async function selectBoard(board: ListBoard) {
   if (selectedBoard.value?.id === board.id) return
 
   const lists = await loadLists(board.id)
   const asSignals = await Promise.all(
-    lists.sort(filterByOrder).map(async (list) => {
-      const items = (await loadItems(list.id)).sort(filterByOrder)
+    lists.sort(sortByOrder).map(async (list) => {
+      const items = (await loadItems(list.id)).sort(sortByOrder)
       return createSignal({
         ...list,
         items: createSignal(items),
