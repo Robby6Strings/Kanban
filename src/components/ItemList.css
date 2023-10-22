@@ -1,25 +1,30 @@
+.list, .add-list {
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  min-width: 250px;
+  margin-top: 1.5rem;
+  margin-bottom: 5rem;
+}
+
 .add-list {
-  padding: 0 .5rem;
   display: flex;
   flex-direction: column;
   height: 100%;
+  margin-right: 3rem;
+  margin-left: 1.5rem;
 }
 
 .add-list button {
   width: 100%;
 }
 
-.list, .add-list {
-  display: flex;
-  flex-direction: column;
-  width: 250px;
-  min-width: 250px;
-  margin-top: .5rem;
+.list:first-child {
+  margin-left: 3rem;
 }
-
 .list {
   background-color: var(--list-bg-color);
-  margin-inline: .5rem;
+  margin-left: 1.5rem;
   border-radius: var(--radius);
   overflow: hidden;
   height: fit-content;
