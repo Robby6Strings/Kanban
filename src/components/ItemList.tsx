@@ -18,6 +18,8 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
   const dropAreaComponentRef = createSignal<Component | null>(null)
   const isEditingTitle = createSignal(false)
   const inputRef = useRef()
+  const handleRef = useRef()
+  const headerRef = useRef()
 
   const handleListMouseMove = (e: MouseEvent) => {
     if (!list.value) return
@@ -56,17 +58,6 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
     listItemDragTarget.value = { index, listId: list.value.id }
   }
 
-  const handleListTitleFocus = (e: Event) => {
-    if (isEditingTitle.value) {
-      return
-    }
-    e.preventDefault()
-    e.stopImmediatePropagation()
-    ;(e.target as HTMLInputElement).blur()
-
-    console.log("asdasdasdasd")
-  }
-
   const changeTitle = async (e: Event) => {
     if (!list.value) return
     const input = e.target as HTMLInputElement
@@ -80,11 +71,8 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
       key={list.value.id}
       onMounted={(self) => (componentRef.value = self)}
       onmousedown={(e: MouseEvent) => {
-        if (e.target !== inputRef.value) return
-        // the offset we get is of the input so we need to add the padding
-        const padding = parseInt(
-          getComputedStyle(componentRef.value?.element!).padding
-        )
+        if (!headerRef.value?.contains(e.target as HTMLElement)) return
+        const padding = parseInt(getComputedStyle(headerRef.value!).padding)
         clickedList.value = {
           id: list.value.id,
           index: list.value.order,
@@ -110,7 +98,7 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
         }`
       }
     >
-      <div className="list-header">
+      <div ref={headerRef} className="list-header">
         <KeyboardListener
           keys={["Escape"]}
           onCapture={(_, e) => {
@@ -125,13 +113,22 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
           onchange={changeTitle}
           onblur={() => (isEditingTitle.value = false)}
           watch={[list, isEditingTitle]}
+          bind:visible={() => isEditingTitle.value}
           bind:value={() => list.value?.title}
-          bind:tabIndex={() => (isEditingTitle.value ? "0" : "-1")}
           bind:className={() =>
             isEditingTitle.value ? "list-title editing" : "list-title"
           }
-          onfocus={handleListTitleFocus}
         />
+        <h4
+          ref={handleRef}
+          className="list-title"
+          watch={[list, isEditingTitle]}
+          bind:visible={() => !isEditingTitle.value}
+          bind:children
+        >
+          {() => list.value?.title || "Name this list..."}
+        </h4>
+
         <button
           watch={isEditingTitle}
           bind:visible={() => !isEditingTitle.value}
