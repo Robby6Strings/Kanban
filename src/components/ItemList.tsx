@@ -81,6 +81,10 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
       onMounted={(self) => (componentRef.value = self)}
       onmousedown={(e: MouseEvent) => {
         if (e.target !== inputRef.value) return
+        // the offset we get is of the input so we need to add the padding
+        const padding = parseInt(
+          getComputedStyle(componentRef.value?.element!).padding
+        )
         clickedList.value = {
           id: list.value.id,
           index: list.value.order,
@@ -89,8 +93,8 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
             true
           ) as HTMLButtonElement,
           mouseOffset: {
-            x: e.offsetX + 12, // the offset we get is of the input so we need to add the padding
-            y: e.offsetY + 12,
+            x: e.offsetX + padding,
+            y: e.offsetY + padding,
           },
         }
       }}
