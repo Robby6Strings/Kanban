@@ -1,5 +1,5 @@
 import "./Board.css"
-import { createSignal, useRef, RawHtml, Signal } from "cinnabun"
+import { createSignal, useRef, RawHtml, Signal, For, Component } from "cinnabun"
 import {
   activeLists,
   draggingBoard,
@@ -10,6 +10,7 @@ import {
   mousePos,
   listItemDragTarget,
   clickedList,
+  listDragTarget,
 } from "../state"
 import { ItemList } from "./ItemList"
 import { updateItem } from "../db"
@@ -20,6 +21,7 @@ export const Board = () => {
   const elementRef = useRef()
   const itemClone = createSignal<HTMLElement | null>(null)
   const listClone = createSignal<HTMLElement | null>(null)
+  const dropAreaComponentRef = createSignal<Component | null>(null)
 
   const handleMouseDown = (e: MouseEvent) => {
     if (!elementRef.value) return
@@ -117,8 +119,37 @@ export const Board = () => {
       clickedList.value.dragging = true
       clickedList.notify()
       listClone.value = clickedList.value.element
-      return
     }
+    // else if (!clickedList.value) {
+    //   listDragTarget.value = null
+    //   return
+    // }
+    if (clickedList.value?.dragging) {
+      if (!dropAreaComponentRef.value) return
+      const elements = (
+        dropAreaComponentRef.value.children[0]! as Component
+      ).children
+        .filter((c) => (c as Component).props.key !== clickedList.value?.id)
+        .map((c) => (c as Component).element as HTMLElement)
+
+      let index: number = elements.length
+
+      const draggedItemLeft = e.clientX - clickedList.value.mouseOffset.x
+
+      for (let i = 0; i < elements.length; i++) {
+        const element = elements[i] as HTMLElement
+        const rect = element.getBoundingClientRect()
+        if (draggedItemLeft < rect.left) {
+          index = i
+          break
+        }
+      }
+
+      listDragTarget.value = { index }
+    } else if (listDragTarget.value) {
+      listDragTarget.value = null
+    }
+
     if (!draggingBoard.value) return
     drag.value.dragCurrent = {
       x: e.movementX,
@@ -138,6 +169,7 @@ export const Board = () => {
       bind:children
     >
       <div
+        onMounted={(self) => (dropAreaComponentRef.value = self)}
         ref={elementRef}
         watch={[draggingBoard, clickedItem]}
         bind:className={() =>
@@ -145,7 +177,8 @@ export const Board = () => {
           (draggingBoard.value || clickedItem.value?.dragging ? "dragging" : "")
         }
       >
-        {() => activeLists.value.map((list) => <ItemList list={list} />)}
+        <For each={activeLists} template={(list) => <ItemList list={list} />} />
+        {/* {() => activeLists.value.map((list) => <ItemList list={list} />)} */}
         <div className="add-list">
           <button
             type="button"

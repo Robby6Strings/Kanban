@@ -31,6 +31,11 @@
   cursor: initial;
   box-shadow: 2px 2px 8px -3px rgba(0, 0, 0, .3);
   border: 1px solid rgba(0, 0, 0, .025);
+  transition: all .15s ease;
+}
+
+.list.drop-target {
+  margin-left: 300px;
 }
 
 .list-footer {
