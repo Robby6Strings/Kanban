@@ -1,20 +1,20 @@
 import "./ItemList.css"
 import type { ListItem, ReactiveList } from "../types"
 import { Component, For, Signal, createSignal, useRef } from "cinnabun"
-import { ClickOutsideListener } from "cinnabun/listeners"
-import { MoreIcon } from "./icons/MoreIcon"
 import {
   addListItem,
-  archiveList,
   clickedItem,
-  deleteList,
   listItemDragTarget,
   selectListItem,
   updateList,
 } from "../state"
+import { EditIcon } from "./icons/EditIcon"
+import { KeyboardListener } from "cinnabun/listeners"
 
 export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
   const dropAreaComponentRef = createSignal<Component | null>(null)
+  const isEditingTitle = createSignal(false)
+  const inputRef = useRef()
 
   const handleListMouseMove = (e: MouseEvent) => {
     if (!list.value) return
@@ -53,50 +53,63 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
     listItemDragTarget.value = { index, listId: list.value.id }
   }
 
-  const actionsOpen = createSignal(false)
-  const changeTitle = (e: Event) => {
+  const handleListTitleFocus = (e: Event) => {
+    if (isEditingTitle.value) {
+      return
+    }
+    e.preventDefault()
+    e.stopImmediatePropagation()
+    ;(e.target as HTMLInputElement).blur()
+
+    console.log("asdasdasdasd")
+  }
+
+  const changeTitle = async (e: Event) => {
     if (!list.value) return
-    list.value.title = (e.target as HTMLInputElement).value
-    return updateList(list.value)
+    const input = e.target as HTMLInputElement
+    list.value.title = input.value
+    await updateList(list.value)
+    input.blur()
   }
 
   return (
     <div key={list.value?.id} className="list">
       <div className="list-header">
+        <KeyboardListener
+          keys={["Escape"]}
+          onCapture={(_, e) => {
+            ;(e.target as HTMLInputElement)?.blur()
+            isEditingTitle.value = false
+          }}
+        />
         <input
+          ref={inputRef}
           placeholder="Name this list..."
           className="list-title"
           onchange={changeTitle}
-          watch={list}
+          onblur={() => (isEditingTitle.value = false)}
+          watch={[list, isEditingTitle]}
           bind:value={() => list.value?.title}
+          bind:tabIndex={() => (isEditingTitle.value ? "0" : "-1")}
+          bind:className={() =>
+            isEditingTitle.value ? "list-title editing" : "list-title"
+          }
+          onfocus={handleListTitleFocus}
         />
-
-        <div className="list-actions">
-          <ClickOutsideListener
-            tag="div"
-            onCapture={() => (actionsOpen.value = false)}
-          >
-            <button
-              className="icon-button"
-              type="button"
-              onclick={() => (actionsOpen.value = !actionsOpen.value)}
-            >
-              <MoreIcon />
-            </button>
-            <div
-              watch={actionsOpen}
-              className="list-actions-menu"
-              bind:visible={() => actionsOpen.value}
-            >
-              <button type="button" onclick={() => deleteList(list.value!.id)}>
-                Delete list
-              </button>
-              <button type="button" onclick={() => archiveList(list.value!.id)}>
-                Archive list
-              </button>
-            </div>
-          </ClickOutsideListener>
-        </div>
+        <button
+          watch={isEditingTitle}
+          bind:visible={() => !isEditingTitle.value}
+          onclick={() => {
+            isEditingTitle.value = !isEditingTitle.value
+            if (isEditingTitle.value) {
+              ;(inputRef.value as HTMLInputElement)?.focus()
+            }
+          }}
+          className="icon-button"
+          type="button"
+        >
+          <EditIcon />
+        </button>
       </div>
       <div
         watch={listItemDragTarget}
