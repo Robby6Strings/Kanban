@@ -4,6 +4,8 @@ import { Component, For, Signal, createSignal, useRef } from "cinnabun"
 import {
   addListItem,
   clickedItem,
+  clickedList,
+  listDragTarget,
   listItemDragTarget,
   selectListItem,
   updateList,
@@ -12,6 +14,7 @@ import { EditIcon } from "./icons/EditIcon"
 import { KeyboardListener } from "cinnabun/listeners"
 
 export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
+  const componentRef = createSignal<Component | null>(null)
   const dropAreaComponentRef = createSignal<Component | null>(null)
   const isEditingTitle = createSignal(false)
   const inputRef = useRef()
@@ -73,7 +76,36 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
   }
 
   return (
-    <div key={list.value?.id} className="list">
+    <div
+      key={list.value.id}
+      onMounted={(self) => (componentRef.value = self)}
+      onmousedown={(e: MouseEvent) => {
+        if (e.target !== inputRef.value) return
+        clickedList.value = {
+          id: list.value.id,
+          index: list.value.order,
+          dragging: false,
+          element: componentRef.value!.element!.cloneNode(
+            true
+          ) as HTMLButtonElement,
+          mouseOffset: {
+            x: e.offsetX,
+            y: e.offsetY,
+          },
+        }
+      }}
+      watch={[clickedList, listDragTarget]}
+      bind:visible={() =>
+        !clickedList.value ||
+        !clickedList.value.dragging ||
+        clickedList.value.id !== list.value.id
+      }
+      bind:className={() =>
+        `list ${
+          listDragTarget.value?.index === list.value.order ? "drop-target" : ""
+        }`
+      }
+    >
       <div className="list-header">
         <KeyboardListener
           keys={["Escape"]}

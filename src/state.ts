@@ -40,19 +40,33 @@ export const drag = createSignal<DragState>({
 export const rootElement = document.getElementById("app")!
 export const mousePos = createSignal({ x: 0, y: 0 })
 export const draggingBoard = createSignal(false)
-export const listItemDragTarget = createSignal<null | {
-  index: number
-  listId: number
-}>(null)
+
 export const boards = asyncSignal(load())
 export const selectedBoard = createSignal<ReactiveListboard | null>(null)
 export const selectedListItem = createSignal<ListItem | null>(null)
 export const showSelectedListItem = createSignal(false)
 
+// a representation of 'where our currently dragged item is'
+export const listItemDragTarget = createSignal<{
+  index: number
+  listId: number
+} | null>(null)
+// a representation of 'our currently dragged item'
 export const clickedItem = createSignal<{
   id: number
   index: number
   listId: number
+  dragging: boolean
+  element: HTMLElement
+  mouseOffset: { x: number; y: number }
+} | null>(null)
+
+// a representation of 'where our currently dragged list is'
+export const listDragTarget = createSignal<{ index: number } | null>(null)
+// a representation of 'our currently dragged list'
+export const clickedList = createSignal<{
+  id: number
+  index: number
   dragging: boolean
   element: HTMLElement
   mouseOffset: { x: number; y: number }

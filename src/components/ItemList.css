@@ -149,13 +149,9 @@
   transition: margin-top .15s ease;
 }
 
-
-
 .list-item.drop-target {
   margin-top: 3rem;
 }
-
-
 
 .list-item.default {
   background-color: transparent;

@@ -9,6 +9,7 @@ import {
   clickedItem,
   mousePos,
   listItemDragTarget,
+  clickedList,
 } from "../state"
 import { ItemList } from "./ItemList"
 import { updateItem } from "../db"
@@ -16,12 +17,13 @@ import { sortByOrder } from "../utils"
 import { ReactiveList } from "../types"
 
 export const Board = () => {
-  const draggableRef = useRef()
+  const elementRef = useRef()
   const itemClone = createSignal<HTMLElement | null>(null)
+  const listClone = createSignal<HTMLElement | null>(null)
 
   const handleMouseDown = (e: MouseEvent) => {
-    if (!draggableRef.value) return
-    if (e.target !== draggableRef.value) return
+    if (!elementRef.value) return
+    if (e.target !== elementRef.value) return
     draggingBoard.value = true
   }
 
@@ -93,8 +95,15 @@ export const Board = () => {
       listItemDragTarget.value = null
       clickedItem.value.dragging = false
       clickedItem.value = null
+    } else if (draggingBoard.value) {
+      draggingBoard.value = false
+    }
+    if (clickedList.value) {
+      clickedList.value.dragging = false
+      clickedList.value = null
     }
     itemClone.value = null
+    listClone.value = null
   }
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -103,7 +112,12 @@ export const Board = () => {
       clickedItem.notify()
       itemClone.value = clickedItem.value.element
       return
-    } else if (clickedItem.value && clickedItem.value.dragging) {
+    }
+    if (clickedList.value && !clickedList.value.dragging) {
+      clickedList.value.dragging = true
+      clickedList.notify()
+      listClone.value = clickedList.value.element
+      return
     }
     if (!draggingBoard.value) return
     drag.value.dragCurrent = {
@@ -124,7 +138,7 @@ export const Board = () => {
       bind:children
     >
       <div
-        ref={draggableRef}
+        ref={elementRef}
         watch={[draggingBoard, clickedItem]}
         bind:className={() =>
           "inner " +
@@ -146,6 +160,7 @@ export const Board = () => {
         watch={[itemClone, mousePos]}
         id="item-clone"
         bind:children
+        bind:visible={() => !!clickedItem.value?.dragging}
         bind:style={() =>
           "transform: translate(" +
           (mousePos.value.x - (clickedItem.value?.mouseOffset.x || 0)) +
@@ -155,6 +170,22 @@ export const Board = () => {
         }
       >
         {() => <RawHtml html={clickedItem.value?.element.outerHTML || ""} />}
+      </div>
+
+      <div
+        watch={[listClone, mousePos]}
+        id="list-clone"
+        bind:children
+        bind:visible={() => !!clickedList.value?.dragging}
+        bind:style={() =>
+          "transform: translate(" +
+          (mousePos.value.x - (clickedList.value?.mouseOffset.x || 0)) +
+          "px, " +
+          (mousePos.value.y - (clickedList.value?.mouseOffset.y || 0)) +
+          "px)"
+        }
+      >
+        {() => <RawHtml html={clickedList.value?.element.outerHTML || ""} />}
       </div>
     </div>
   )
