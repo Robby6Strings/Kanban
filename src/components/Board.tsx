@@ -173,10 +173,14 @@ export const Board = () => {
       <div
         onMounted={(self) => (dropAreaComponentRef.value = self)}
         ref={elementRef}
-        watch={[draggingBoard, clickedItem]}
+        watch={[draggingBoard, clickedItem, clickedList]}
         bind:className={() =>
           "inner " +
-          (draggingBoard.value || clickedItem.value?.dragging ? "dragging" : "")
+          (draggingBoard.value ||
+          !!clickedItem.value?.dragging ||
+          !!clickedList.value?.dragging
+            ? "dragging"
+            : "")
         }
       >
         <For each={activeLists} template={(list) => <ItemList list={list} />} />
