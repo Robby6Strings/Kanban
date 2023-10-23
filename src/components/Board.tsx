@@ -139,11 +139,13 @@ export const Board = () => {
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i] as HTMLElement
         const rect = element.getBoundingClientRect()
-        if (draggedItemLeft < rect.left) {
+        if (draggedItemLeft < rect.left + 1) {
           index = i
           break
         }
       }
+
+      if (clickedList.value.index <= index) index++
 
       listDragTarget.value = { index }
     } else if (listDragTarget.value) {

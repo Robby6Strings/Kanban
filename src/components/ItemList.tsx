@@ -89,8 +89,8 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
             true
           ) as HTMLButtonElement,
           mouseOffset: {
-            x: e.offsetX,
-            y: e.offsetY,
+            x: e.offsetX + 12, // the offset we get is of the input so we need to add the padding
+            y: e.offsetY + 12,
           },
         }
       }}

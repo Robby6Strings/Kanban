@@ -35,7 +35,7 @@
 }
 
 .list.drop-target {
-  margin-left: 300px;
+  margin-left: calc(250px + 3rem);
 }
 
 .list-footer {
