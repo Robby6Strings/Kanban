@@ -156,13 +156,14 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
         bind:className={() => {
           if (listItemDragTarget.value?.listId !== list.value.id)
             return "list-items"
+
           return `list-items ${clickedItem.value?.dragging ? "dragging" : ""} 
           ${listItemDragTarget.value?.initial ? "initial" : ""} 
           ${
             listItemDragTarget.value?.index === list.value.items.value.length
               ? "last"
               : ""
-          }`
+          }`.replace(/\s+/g, " ")
         }}
       >
         <div
