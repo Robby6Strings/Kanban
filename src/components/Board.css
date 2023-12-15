@@ -16,7 +16,8 @@
   flex-grow: 1;
 }
 
-#board .inner.dragging, #board .inner.dragging *  {
+#board .inner.dragging,
+#board .inner.dragging * {
   cursor: grabbing;
 }
 

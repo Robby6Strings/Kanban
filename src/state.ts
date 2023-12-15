@@ -46,10 +46,14 @@ export const selectedBoard = createSignal<ReactiveListboard | null>(null)
 export const selectedListItem = createSignal<ListItem | null>(null)
 export const showSelectedListItem = createSignal(false)
 
+export const itemClone = createSignal<HTMLElement | null>(null)
+export const listClone = createSignal<HTMLElement | null>(null)
+
 // a representation of 'where our currently dragged item is'
 export const listItemDragTarget = createSignal<{
   index: number
   listId: number
+  initial: boolean
 } | null>(null)
 // a representation of 'our currently dragged item'
 export const clickedItem = createSignal<{

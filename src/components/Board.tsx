@@ -10,6 +10,8 @@ import {
   mousePos,
   listItemDragTarget,
   clickedList,
+  itemClone,
+  listClone,
 } from "../state"
 import { ItemList } from "./ItemList"
 import { updateItem } from "../db"
@@ -18,8 +20,6 @@ import { ReactiveList } from "../types"
 
 export const Board = () => {
   const elementRef = useRef()
-  const itemClone = createSignal<HTMLElement | null>(null)
-  const listClone = createSignal<HTMLElement | null>(null)
 
   const handleMouseDown = (e: MouseEvent) => {
     if (!elementRef.value) return
@@ -107,12 +107,6 @@ export const Board = () => {
   }
 
   const handleMouseMove = (e: MouseEvent) => {
-    if (clickedItem.value && !clickedItem.value.dragging) {
-      clickedItem.value.dragging = true
-      clickedItem.notify()
-      itemClone.value = clickedItem.value.element
-      return
-    }
     if (clickedList.value && !clickedList.value.dragging) {
       clickedList.value.dragging = true
       clickedList.notify()

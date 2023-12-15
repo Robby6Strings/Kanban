@@ -5,6 +5,7 @@ import {
   addListItem,
   clickedItem,
   clickedList,
+  itemClone,
   listDragTarget,
   listItemDragTarget,
   selectListItem,
@@ -53,7 +54,7 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
       if (clickedItem.value.index <= index) index++
     }
 
-    listItemDragTarget.value = { index, listId: list.value.id }
+    listItemDragTarget.value = { index, listId: list.value.id, initial: false }
   }
 
   const handleListTitleFocus = (e: Event) => {
@@ -92,6 +93,13 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
             x: e.offsetX,
             y: e.offsetY,
           },
+        }
+      }}
+      onmousemove={() => {
+        if (clickedItem.value && !clickedItem.value.dragging) {
+          clickedItem.value.dragging = true
+          clickedItem.notify()
+          return
         }
       }}
       watch={[clickedList, listDragTarget]}
@@ -145,15 +153,17 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
       </div>
       <div
         watch={listItemDragTarget}
-        bind:className={() =>
-          `list-items ${
-            listItemDragTarget.value?.listId === list.value.id ? "dragging" : ""
-          } ${
+        bind:className={() => {
+          if (listItemDragTarget.value?.listId !== list.value.id)
+            return "list-items"
+          return `list-items ${clickedItem.value?.dragging ? "dragging" : ""} 
+          ${listItemDragTarget.value?.initial ? "initial" : ""} 
+          ${
             listItemDragTarget.value?.index === list.value.items.value.length
               ? "last"
               : ""
           }`
-        }
+        }}
       >
         <div
           onMounted={(self) => {
@@ -171,7 +181,13 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
         >
           <For
             each={list.value.items}
-            template={(item, idx) => <ListItemButton item={item} idx={idx} />}
+            template={(item, idx) => (
+              <ListItemButton
+                item={item}
+                idx={idx}
+                dropAreaRef={dropAreaComponentRef}
+              />
+            )}
           />
 
           <div
@@ -204,42 +220,70 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
   )
 }
 
-const ListItemButton = ({ item, idx }: { item: ListItem; idx: number }) => {
+const ListItemButton = ({
+  item,
+  idx,
+  dropAreaRef,
+}: {
+  item: ListItem
+  idx: number
+  dropAreaRef: Signal<Component | null>
+}) => {
   const componentRef = createSignal<Component | null>(null)
+  const rect = createSignal<DOMRect | null>(null)
   if (!item) return <></>
   return (
     <button
-      onMounted={(self) => (componentRef.value = self)}
-      onclick={() => selectListItem(item)}
+      onMounted={(self) => {
+        componentRef.value = self
+        rect.value = self.element!.getBoundingClientRect()
+      }}
       key={item.id}
+      onclick={() => selectListItem(item)}
       watch={[clickedItem, listItemDragTarget]}
       bind:visible={() =>
-        !clickedItem.value ||
-        !clickedItem.value.dragging ||
-        clickedItem.value.id !== item.id
+        !clickedItem.value?.dragging || clickedItem.value.id !== item.id
       }
+      bind:style={() => {
+        if (!rect.value) return ""
+        if (clickedItem.value?.id !== item.id) return ""
+        // get the offset of the element from the drop area ref
+        const dropAreaRect = dropAreaRef.value?.element?.getBoundingClientRect()
+        if (!dropAreaRect) return ""
+        const x = rect.value.x - dropAreaRect.x
+        const y = rect.value.y - dropAreaRect.y
+        return `transform: translate(calc(${x}px - .5rem), calc(${y}px - .5rem))`
+      }}
       bind:className={() =>
         `list-item ${
           listItemDragTarget.value?.index === idx &&
           listItemDragTarget.value?.listId === item.listId
             ? "drop-target"
             : ""
-        }`
+        } ${clickedItem.value?.id === item.id ? "selected" : ""}`
       }
       onmousedown={(e: MouseEvent) => {
+        const element = componentRef.value!.element!.cloneNode(
+          true
+        ) as HTMLButtonElement
+
         clickedItem.value = {
           id: item.id,
           listId: item.listId,
           index: idx,
           dragging: false,
-          element: componentRef.value!.element!.cloneNode(
-            true
-          ) as HTMLButtonElement,
+          element,
           mouseOffset: {
             x: e.offsetX,
             y: e.offsetY,
           },
         }
+        listItemDragTarget.value = {
+          index: idx + 1,
+          listId: item.listId,
+          initial: true,
+        }
+        //itemClone.value = element
       }}
     >
       {() => item.title || "New Item"}
