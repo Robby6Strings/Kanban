@@ -37,7 +37,7 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
 
     const isOriginList = clickedItem.value.listId === list.value.id
 
-    let index: number = elements.length
+    let index = elements.length
 
     const draggedItemTop = e.clientY - clickedItem.value.mouseOffset.y
 
@@ -50,8 +50,8 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
       }
     }
 
-    if (isOriginList) {
-      if (clickedItem.value.index <= index) index++
+    if (isOriginList && clickedItem.value.index <= index) {
+      index++
     }
 
     listItemDragTarget.value = { index, listId: list.value.id, initial: false }
@@ -154,10 +154,23 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
       <div
         watch={listItemDragTarget}
         bind:className={() => {
-          if (listItemDragTarget.value?.listId !== list.value.id)
-            return "list-items"
+          let className = `list-items`
+          const isOriginList = clickedItem.value?.listId === list.value.id
+          if (isOriginList) {
+            className += " origin"
+          }
 
-          return `list-items ${clickedItem.value?.dragging ? "dragging" : ""} 
+          if (
+            list.value.items.value.length === 0 ||
+            (list.value.items.value.length === 1 && isOriginList)
+          ) {
+            className += " empty"
+          }
+
+          if (listItemDragTarget.value?.listId !== list.value.id)
+            return className
+
+          return `${className} ${clickedItem.value?.dragging ? "dragging" : ""} 
           ${listItemDragTarget.value?.initial ? "initial" : ""} 
           ${
             listItemDragTarget.value?.index === list.value.items.value.length

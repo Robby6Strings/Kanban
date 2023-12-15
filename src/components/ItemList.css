@@ -116,6 +116,7 @@
 
 .list-items-inner {
   position: relative;
+  /* min-height: 40px; */
   background-color: rgba(0, 0, 0, 0.05);
   gap: .5rem;
   display: flex;
@@ -123,6 +124,10 @@
   padding: .5rem;
   border-radius: var(--radius);
   transition: background-color .15s ease;
+}
+
+.list-items.empty .list-items-inner {
+  min-height: 40px;
 }
 
 .list-items.dragging .list-items-inner {
@@ -144,9 +149,11 @@
 }
 
 
-.list-items.last .list-items-inner {
+
+.list-items.last:not(.empty) .list-items-inner {
   padding-bottom: calc(3.5rem - 1px);
 }
+
 
 .list-items.dragging.initial .list-item {
   transition: none;
@@ -171,7 +178,7 @@
   width: calc(100% - 1rem);
 }
 
-.list-item.drop-target {
+.list-item.drop-target:not(.default) {
   margin-top: calc(3rem - 1px);
 }
 

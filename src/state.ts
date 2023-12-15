@@ -170,6 +170,7 @@ export async function addListItem(listId: number) {
 
   list.value.items.value.push(item)
   list.value.items.notify()
+  list.notify()
 }
 
 export async function updateListItem(item: ListItem) {
@@ -192,6 +193,7 @@ export async function deleteListItem(item: ListItem) {
 
   list.value.items.value!.splice(index, 1)
   list.value.items.notify()
+  list.notify()
 }
 
 export async function archiveListItem(item: ListItem) {
