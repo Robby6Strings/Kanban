@@ -102,7 +102,7 @@ export const ItemList = ({ list }: { list: Signal<ReactiveList> }) => {
           return
         }
       }}
-      watch={[clickedList, listDragTarget]}
+      watch={[clickedList]}
       bind:visible={() =>
         !clickedList.value ||
         !clickedList.value.dragging ||
