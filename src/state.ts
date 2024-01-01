@@ -1,11 +1,5 @@
 import { Signal, createSignal, useComputed } from "cinnabun"
-import {
-  List,
-  ListBoard,
-  ListItem,
-  ReactiveList,
-  ReactiveListboard,
-} from "./types"
+import { ListBoard, ListItem, ReactiveList, ReactiveListboard } from "./types"
 import {
   addItem,
   addList,
@@ -27,12 +21,7 @@ export function asyncSignal<T>(promise: Promise<T>): Signal<T | null> {
   return signal
 }
 
-type DragState = {
-  dragStart: { x: number; y: number }
-  dragCurrent: { x: number; y: number }
-}
-
-export const drag = createSignal<DragState>({
+export const drag = createSignal({
   dragStart: { x: 0, y: 0 },
   dragCurrent: { x: 0, y: 0 },
 })
@@ -41,15 +30,29 @@ export const rootElement = document.getElementById("app")!
 export const mousePos = createSignal({ x: 0, y: 0 })
 export const draggingBoard = createSignal(false)
 
-export const boards = asyncSignal(load())
+export const boards = asyncSignal(
+  new Promise<ListBoard[]>(async (res) => {
+    const boards = await loadBoards()
+    if (boards.length === 0) {
+      const board = await addBoard()
+      boards.push(board)
+    }
+    selectBoard(boards[0])
+    res(boards)
+  })
+)
 export const selectedBoard = createSignal<ReactiveListboard | null>(null)
 export const selectedListItem = createSignal<ListItem | null>(null)
 export const showSelectedListItem = createSignal(false)
+
+export const itemClone = createSignal<HTMLElement | null>(null)
+export const listClone = createSignal<HTMLElement | null>(null)
 
 // a representation of 'where our currently dragged item is'
 export const listItemDragTarget = createSignal<{
   index: number
   listId: number
+  initial: boolean
 } | null>(null)
 // a representation of 'our currently dragged item'
 export const clickedItem = createSignal<{
@@ -71,16 +74,6 @@ export const clickedList = createSignal<{
   element: HTMLElement
   mouseOffset: { x: number; y: number }
 } | null>(null)
-
-async function load() {
-  const res = await loadBoards()
-  if (res.length === 0) {
-    const board = await addBoard()
-    res.push(board)
-  }
-  selectBoard(res[0])
-  return res
-}
 
 export async function selectBoard(board: ListBoard) {
   if (selectedBoard.value?.id === board.id) return
@@ -177,6 +170,7 @@ export async function addListItem(listId: number) {
 
   list.value.items.value.push(item)
   list.value.items.notify()
+  list.notify()
 }
 
 export async function updateListItem(item: ListItem) {
@@ -199,6 +193,7 @@ export async function deleteListItem(item: ListItem) {
 
   list.value.items.value!.splice(index, 1)
   list.value.items.notify()
+  list.notify()
 }
 
 export async function archiveListItem(item: ListItem) {

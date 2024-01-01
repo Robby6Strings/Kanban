@@ -1,4 +1,5 @@
-.list, .add-list {
+.list,
+.add-list {
   display: flex;
   flex-direction: column;
   width: 250px;
@@ -22,6 +23,7 @@
 .list:first-child {
   margin-left: 3rem;
 }
+
 .list {
   background-color: var(--list-bg-color);
   margin-left: 1.5rem;
@@ -47,13 +49,14 @@
 }
 
 .list-header {
-  display:flex;
+  display: flex;
   padding: .75rem;
   gap: .5rem;
   align-items: center;
   box-shadow: 0 0 5px rgba(0, 0, 0, .1);
   background: #333;
 }
+
 @media (prefers-color-scheme: light) {
   .list-header {
     background: #fafafa;
@@ -95,7 +98,7 @@
   padding: .5rem;
   border-radius: var(--radius);
   box-shadow: 1px 1px 5px rgba(0, 0, 0, .1);
-  z-index:1;
+  z-index: 1;
 }
 
 .list-actions-menu button {
@@ -116,17 +119,27 @@
 }
 
 .list-items-inner {
+  position: relative;
+  /* min-height: 40px; */
   background-color: rgba(0, 0, 0, 0.05);
   gap: .5rem;
   display: flex;
   flex-direction: column;
   padding: .5rem;
   border-radius: var(--radius);
-  transition: background-color .15s ease, padding .1s ease;
+  transition: background-color .15s ease;
+}
+
+.list-items.empty .list-items-inner {
+  min-height: 40px;
 }
 
 .list-items.dragging .list-items-inner {
   background-color: rgba(0, 0, 0, 0.15);
+}
+
+.list-items.dragging:not(.initial) .list-items-inner {
+  transition: background-color .15s ease, padding .15s ease;
 }
 
 .list-items.dragging button {
@@ -135,12 +148,23 @@
 
 @media (prefers-color-scheme: light) {
   .list-items.dragging .list-items-inner {
-      background-color: rgba(0, 0, 0, 0.1);
-    }
+    background-color: rgba(0, 0, 0, 0.1);
+  }
 }
 
-.list-items.dragging.last .list-items-inner {
-  padding-bottom: 3.5rem;
+
+
+.list-items.last:not(.empty) .list-items-inner {
+  padding-bottom: calc(3.5rem - 1px);
+}
+
+
+.list-items.dragging.initial .list-item {
+  transition: none;
+}
+
+.list-items:not(.dragging) .list-item {
+  transition: none;
 }
 
 .list-item {
@@ -153,9 +177,15 @@
   transition: margin-top .15s ease;
 }
 
-.list-item.drop-target {
-  margin-top: 3rem;
+.list-item.selected {
+  position: absolute;
+  width: calc(100% - 1rem);
 }
+
+.list-item.drop-target:not(.default) {
+  margin-top: calc(3rem - 1px);
+}
+
 
 .list-item.default {
   background-color: transparent;
